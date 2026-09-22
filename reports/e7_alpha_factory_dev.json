@@ -1,0 +1,13 @@
+{
+  "coverage": 0.876059,
+  "n_tried": 633,
+  "tried_by_family": {
+    "seed": 19,
+    "random": 570,
+    "claude": 44
+  },
+  "library": [],
+  "claude_cost_usd": 0.342328,
+  "holdout_unlocked": false,
+  "portfolios": {}
+}

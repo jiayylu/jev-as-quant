@@ -29,7 +29,7 @@ ET = "America/New_York"
 
 class SecClient:
     def __init__(self, user_agent: str | None = None, cache_dir: str | Path = "data_cache/sec",
-                 max_per_second: float = 8.0):
+                 max_per_second: float = 9.0):
         self.ua = user_agent or os.environ.get("SEC_USER_AGENT", "")
         if "@" not in self.ua:
             raise RuntimeError('set SEC_USER_AGENT to "<your name or org> <your email>" (SEC fair-access policy)')
@@ -38,6 +38,7 @@ class SecClient:
         self.min_gap = 1.0 / max_per_second
         self._lock = threading.Lock()
         self._last = 0.0
+        self._local = threading.local()
 
     def _wait(self):
         with self._lock:
@@ -47,34 +48,53 @@ class SecClient:
                 time.sleep(sleep)
             self._last = time.monotonic()
 
-    def get(self, url: str, retries: int = 4) -> bytes | None:
+    def _conn(self, host: str):
+        """One persistent HTTPS connection per thread and host (no TLS handshake per request)."""
+        import http.client
+
+        conns = getattr(self._local, "conns", None)
+        if conns is None:
+            conns = self._local.conns = {}
+        if host not in conns:
+            conns[host] = http.client.HTTPSConnection(host, timeout=30)
+        return conns[host]
+
+    def get(self, url: str, retries: int = 7) -> bytes | None:
         """Cached GET. Returns None for 404 (e.g. a filing without the expected document)."""
+        import http.client
+        from urllib.parse import urlsplit
+
         key = self.cache / (hashlib.sha1(url.encode()).hexdigest() + ".gz")
         if key.exists():
             data = gzip.decompress(key.read_bytes())
             return None if data == b"__404__" else data
+        u = urlsplit(url)
+        path = u.path + (f"?{u.query}" if u.query else "")
         delay = 1.0
         for attempt in range(retries):
             self._wait()
-            req = urllib.request.Request(url, headers={"User-Agent": self.ua, "Accept-Encoding": "gzip"})
             try:
-                with urllib.request.urlopen(req, timeout=30) as r:
-                    data = r.read()
-                    if r.headers.get("Content-Encoding") == "gzip":
+                c = self._conn(u.netloc)
+                c.request("GET", path, headers={"User-Agent": self.ua, "Accept-Encoding": "gzip",
+                                                "Host": u.netloc, "Connection": "keep-alive"})
+                r = c.getresponse()
+                data = r.read()
+                if r.status == 200:
+                    if r.getheader("Content-Encoding") == "gzip":
                         data = gzip.decompress(data)
-                key.write_bytes(gzip.compress(data))
-                return data
-            except urllib.error.HTTPError as e:
-                if e.code == 404:
+                    key.write_bytes(gzip.compress(data))
+                    return data
+                if r.status == 404:
                     key.write_bytes(gzip.compress(b"__404__"))
                     return None
-                if e.code not in (403, 429, 500, 502, 503) or attempt == retries - 1:
-                    raise
-            except (urllib.error.URLError, TimeoutError):
+                if r.status not in (403, 429, 500, 502, 503) or attempt == retries - 1:
+                    raise urllib.error.HTTPError(url, r.status, r.reason, r.headers, None)
+            except (http.client.HTTPException, OSError):
+                self._local.conns.pop(u.netloc, None)  # drop the broken connection and reconnect
                 if attempt == retries - 1:
                     raise
             time.sleep(delay)
-            delay *= 2
+            delay = min(delay * 2, 30.0)
         return None
 
     def json(self, url: str):
