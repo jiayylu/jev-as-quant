@@ -26,7 +26,7 @@
 | 策略路由（市场状态） | 合成市场有真值：规则的平衡准确率 0.50，Laya 0.37，**危机召回率为 0**；按 Laya 的判断路由，收益和规则差不多（差异在噪声范围内） | ⚠️ 没有增量（E4） |
 | 新闻驱动交易 | 合成市场里捕获的植入新闻冲击：词典 0.49 · Laya 0.56 · TF-IDF 0.58 · **Laya→Claude 0.68** | ✅ 级联最好（E4） |
 | 风控判断 | Laya 的"避险"判断只在 6% 的危机时刻触发，规则是 40% | ❌ 风控用代码（E4） |
-| 真实市场的买卖信号 | 8 只 ETF、2014–2026 的回测还在运行，结果会补在后续提交里 | （E5） |
+| 真实市场的买卖信号 | 8 只 ETF、2014–2026 周频：Laya english **永远回答"买入"**，typed-decisions **从不回答"持有"**；Sharpe 0.52 vs 规则 0.62，置信区间重叠；所有信号对下周收益的 IC 都不显著 | ❌ 纯技术面没有增量（E5） |
 | "零幻觉" | 厂商原话：只保证输出符合 schema，**答案本身可能是错的** | ❌ 类型安全 ≠ 判断正确 |
 
 **一句话**：Laya 擅长**读文字**，不擅长**读数字**。它最适合当 Claude 的"快速预筛层"：大部分样本在本地几十毫秒内判完，只把没把握的那一小部分交给 Claude。
@@ -39,6 +39,7 @@
 | [02 任务判断](docs/02-任务判断.md) | 调研事实、逐条核实原始说法、量化任务适配矩阵、实验前写下的假设、和 Claude 的分工 |
 | [03 架构设计](docs/03-架构设计.md) | 设计原则、分层、一次决策的时间线、与 Claude 的三种结合方式、模块地图 |
 | [04 实验报告](docs/04-实验报告.md) | E1–E5 的完整结果与结论 |
+| [05 演示：Claude 调用 Laya](docs/05-演示-Claude调用Laya.md) | Claude Code 通过 MCP 让 Laya 初筛新闻，再自己复核难例（真实运行记录） |
 | [reports/RESULTS.md](reports/RESULTS.md) | 自动生成的全部数据表 |
 
 ## 架构
@@ -76,7 +77,9 @@ flowchart LR
 
 **E1：延迟。** 短文本和官方 T4 数据一致（约 33 ms），但每多问一个问题就多一份开销。
 
-**E5：真实 ETF。** <!--E5-SUMMARY-->回测还在运行，结果会补在后续提交里。
+<picture><source media="(prefers-color-scheme: dark)" srcset="reports/figures/e5_real-dark.png"><img alt="E5" src="reports/figures/e5_real.png"></picture>
+
+**E5：真实 ETF。** 只看技术指标时，Laya 相对规则没有增量，而且两个 checkpoint 都有明显的回答偏置（一个永远说买，一个从不说持有）。这段大牛市里，等权买入持有的 Sharpe 最高。
 
 ## 和 Claude 怎么结合
 
@@ -98,6 +101,12 @@ uv run pytest                                          # 离线：合成数据 +
 
 第一次用到 Laya 时会从 Hugging Face 下载权重（`convaiinnovations/laya`，每个 checkpoint 约 1.7 GB）。
 
+**不想下载模型也能复现**：[Release v0.1.0](https://github.com/jiayylu/jev-as-quant/releases/tag/v0.1.0) 附带了本次实验的全部 46,109 条模型判断（Laya 和 Claude，只有答案和概率，不含文本）。解压到 `.cache/decisions.sqlite` 后，E2–E5 会全部命中缓存，不会加载模型，也不会调用 Claude（E1 测的是延迟，必须在本地真跑）。
+
+```bash
+mkdir -p .cache && gh release download v0.1.0 -p decisions.sqlite.gz -O - | gunzip > .cache/decisions.sqlite
+```
+
 ```bash
 # 类型化问题 → Laya（问题文件就是 Jev/Laya 的原生 JSON 格式）
 uv run jevquant judge --state "Shares plunge 12% after the company slashes guidance" --questions examples/questions.json
@@ -105,7 +114,7 @@ uv run jevquant judge --state "Shares plunge 12% after the company slashes guida
 uv run jevquant screen examples/headlines.txt
 # 某个标的的技术面快照：Laya 和规则基线的判断并排给出（仅供研究）
 uv run jevquant market SPY
-# 复现全部实验（Laya 调用有缓存，重跑不会重复计算）
+# 复现全部实验（Laya 和 Claude 的调用都有缓存，重跑不会重复计算）
 cd experiments && for e in e1_latency e2_numeracy e3_news e4_synthetic e5_real; do uv run python $e.py; done && uv run python make_report.py
 ```
 

@@ -111,3 +111,35 @@ Risk veto on the rules router (Laya threshold τ=0.6 chosen on dev seed 0):
 | no veto | 0.61 ± 0.43 | -0.15 ± 0.04 | – | – |
 | rules veto | 0.64 ± 0.41 | -0.15 ± 0.04 | 0.63 ± 0.06 | 0.40 ± 0.03 |
 | laya veto | 0.62 ± 0.37 | -0.15 ± 0.04 | 0.67 ± 0.27 | 0.06 ± 0.04 |
+
+## E5 real ETFs (2014-01-02 → 2026-08-31, 662 weekly decisions)
+
+| strategy | CAGR | vol | Sharpe [95% CI] | max drawdown | turnover / yr |
+|---|---|---|---|---|---|
+| buy&hold (equal weight) | 10.0% | 13.3% | 0.78 [0.23, 1.37] | -27.1% | 0.7x |
+| signal[rules] | 4.7% | 7.9% | 0.62 [0.15, 1.13] | -17.9% | 5.5x |
+| signal[laya/english] | 10.0% | 13.3% | 0.78 [0.23, 1.37] | -27.1% | 0.7x |
+| signal[laya/typed-decisions] | 4.1% | 8.4% | 0.52 [-0.02, 1.05] | -19.5% | 11.6x |
+| router[rules] | 3.1% | 6.7% | 0.48 [0.01, 0.95] | -15.0% | 12.1x |
+| router[laya/typed-decisions] | 5.2% | 8.2% | 0.66 [0.16, 1.19] | -16.4% | 9.4x |
+| signal[rules] + rules veto | 4.6% | 7.8% | 0.62 [0.15, 1.13] | -17.9% | 5.5x |
+| signal[rules] + laya veto | 4.8% | 7.8% | 0.64 [0.17, 1.15] | -17.9% | 5.5x |
+
+Predictive power (next-week return):
+
+| signal | mean cross-sectional IC | t-stat | pooled rank corr |
+|---|---|---|---|
+| rules:action_edge | -0.016 | -0.84 | -0.025 |
+| rules:trend | -0.033 | -1.79 | -0.038 |
+| laya/english:action_edge | -0.023 | -1.38 | -0.040 |
+| laya/english:trend | -0.024 | -1.39 | -0.050 |
+| laya/typed-decisions:action_edge | -0.025 | -1.46 | -0.045 |
+| laya/typed-decisions:trend | -0.031 | -1.81 | -0.034 |
+
+Agreement with the rules on buy/hold/sell:
+
+| reader | agree | Cohen's κ | action mix |
+|---|---|---|---|
+| laya/english | 61.3% | 0.00 | {'buy': 1.0} |
+| laya/typed-decisions | 75.8% | 0.49 | {'buy': 0.7086, 'sell': 0.2914} |
+| rules | – | – | {'buy': 0.6135, 'sell': 0.3117, 'hold': 0.0748} |

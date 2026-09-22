@@ -332,6 +332,9 @@ def fig_real(mode):
     ax, ax2 = fig.add_subplot(gs[0]), fig.add_subplot(gs[1])
     import pandas as pd
     ends_x, ends_y, names = [], [], []
+    bh = d["equity"]["buy&hold (equal weight)"]["values"]
+    same_as_bh = [n for n in show if n != "buy&hold (equal weight)" and d["equity"][n]["values"] == bh]
+    show = [n for n in show if n not in same_as_bh]
     for n in show:
         e = d["equity"][n]
         x = pd.to_datetime(e["dates"])
@@ -340,7 +343,10 @@ def fig_real(mode):
         ax2.plot(x, d["drawdown"][n], color=entity_color(n, t), linewidth=1.2, linestyle=ls)
         ends_x.append(x[-1])
         ends_y.append(e["values"][-1])
-        names.append(pretty(n))
+        label = pretty(n)
+        if "buy&hold" in n and same_as_bh:
+            label += "\n  = " + ", ".join(pretty(m) for m in same_as_bh) + "\n  (always says buy)"
+        names.append(label)
     ax.set_yscale("log")
     plain_log_axis(ax)
     label_ends(ax, t, ends_x, ends_y, names, log=True)
