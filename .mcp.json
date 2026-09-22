@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "laya": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "--extra", "laya", "--extra", "data", "--extra", "mcp", "jevquant-mcp"]
+    }
+  }
+}

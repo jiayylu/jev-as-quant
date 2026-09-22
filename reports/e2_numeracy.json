@@ -1,0 +1,367 @@
+{
+  "n_states": 400,
+  "results": [
+    {
+      "checkpoint": "english",
+      "representation": "raw_json",
+      "question": "rsi_above_70",
+      "base_rate": 0.0725,
+      "accuracy": 0.73,
+      "balanced_accuracy": 0.759085,
+      "auc": 0.838461,
+      "brier": 0.172405
+    },
+    {
+      "checkpoint": "english",
+      "representation": "raw_json",
+      "question": "above_sma50",
+      "base_rate": 0.545,
+      "accuracy": 0.635,
+      "balanced_accuracy": 0.61977,
+      "auc": 0.674413,
+      "brier": 0.238069
+    },
+    {
+      "checkpoint": "english",
+      "representation": "raw_json",
+      "question": "up_5d",
+      "base_rate": 0.505,
+      "accuracy": 0.495,
+      "balanced_accuracy": 0.5,
+      "auc": 0.787079,
+      "brier": 0.448572
+    },
+    {
+      "checkpoint": "english",
+      "representation": "raw_json",
+      "question": "vol_above_norm",
+      "base_rate": 0.3575,
+      "accuracy": 0.6475,
+      "balanced_accuracy": 0.525605,
+      "auc": 0.593644,
+      "brier": 0.234726
+    },
+    {
+      "checkpoint": "english",
+      "representation": "raw_json",
+      "question": "near_60d_high",
+      "base_rate": 0.315,
+      "accuracy": 0.675,
+      "balanced_accuracy": 0.511992,
+      "auc": 0.635674,
+      "brier": 0.210304
+    },
+    {
+      "checkpoint": "english",
+      "representation": "numeric_text",
+      "question": "rsi_above_70",
+      "base_rate": 0.0725,
+      "accuracy": 0.66,
+      "balanced_accuracy": 0.769031,
+      "auc": 0.898039,
+      "brier": 0.216142
+    },
+    {
+      "checkpoint": "english",
+      "representation": "numeric_text",
+      "question": "above_sma50",
+      "base_rate": 0.545,
+      "accuracy": 0.815,
+      "balanced_accuracy": 0.817119,
+      "auc": 0.921313,
+      "brier": 0.12083
+    },
+    {
+      "checkpoint": "english",
+      "representation": "numeric_text",
+      "question": "up_5d",
+      "base_rate": 0.505,
+      "accuracy": 0.85,
+      "balanced_accuracy": 0.850985,
+      "auc": 0.934168,
+      "brier": 0.125014
+    },
+    {
+      "checkpoint": "english",
+      "representation": "numeric_text",
+      "question": "vol_above_norm",
+      "base_rate": 0.3575,
+      "accuracy": 0.345,
+      "balanced_accuracy": 0.398765,
+      "auc": 0.340861,
+      "brier": 0.486417
+    },
+    {
+      "checkpoint": "english",
+      "representation": "numeric_text",
+      "question": "near_60d_high",
+      "base_rate": 0.315,
+      "accuracy": 0.7175,
+      "balanced_accuracy": 0.60303,
+      "auc": 0.715068,
+      "brier": 0.189169
+    },
+    {
+      "checkpoint": "english",
+      "representation": "verbal",
+      "question": "rsi_above_70",
+      "base_rate": 0.0725,
+      "accuracy": 0.8925,
+      "balanced_accuracy": 0.942049,
+      "auc": 0.970165,
+      "brier": 0.097269
+    },
+    {
+      "checkpoint": "english",
+      "representation": "verbal",
+      "question": "above_sma50",
+      "base_rate": 0.545,
+      "accuracy": 0.945,
+      "balanced_accuracy": 0.947727,
+      "auc": 0.993497,
+      "brier": 0.055078
+    },
+    {
+      "checkpoint": "english",
+      "representation": "verbal",
+      "question": "up_5d",
+      "base_rate": 0.505,
+      "accuracy": 0.7075,
+      "balanced_accuracy": 0.708796,
+      "auc": 0.830308,
+      "brier": 0.199474
+    },
+    {
+      "checkpoint": "english",
+      "representation": "verbal",
+      "question": "vol_above_norm",
+      "base_rate": 0.3575,
+      "accuracy": 0.4725,
+      "balanced_accuracy": 0.497986,
+      "auc": 0.504068,
+      "brier": 0.324077
+    },
+    {
+      "checkpoint": "english",
+      "representation": "verbal",
+      "question": "near_60d_high",
+      "base_rate": 0.315,
+      "accuracy": 0.88,
+      "balanced_accuracy": 0.813811,
+      "auc": 0.987168,
+      "brier": 0.094635
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "representation": "raw_json",
+      "question": "rsi_above_70",
+      "base_rate": 0.0725,
+      "accuracy": 0.93,
+      "balanced_accuracy": 0.564922,
+      "auc": 0.831397,
+      "brier": 0.114854
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "representation": "raw_json",
+      "question": "above_sma50",
+      "base_rate": 0.545,
+      "accuracy": 0.4925,
+      "balanced_accuracy": 0.531682,
+      "auc": 0.742414,
+      "brier": 0.259926
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "representation": "raw_json",
+      "question": "up_5d",
+      "base_rate": 0.505,
+      "accuracy": 0.495,
+      "balanced_accuracy": 0.5,
+      "auc": 0.764001,
+      "brier": 0.368127
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "representation": "raw_json",
+      "question": "vol_above_norm",
+      "base_rate": 0.3575,
+      "accuracy": 0.64,
+      "balanced_accuracy": 0.50736,
+      "auc": 0.511496,
+      "brier": 0.232934
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "representation": "raw_json",
+      "question": "near_60d_high",
+      "base_rate": 0.315,
+      "accuracy": 0.685,
+      "balanced_accuracy": 0.5,
+      "auc": 0.728102,
+      "brier": 0.228125
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "representation": "numeric_text",
+      "question": "rsi_above_70",
+      "base_rate": 0.0725,
+      "accuracy": 0.81,
+      "balanced_accuracy": 0.833999,
+      "auc": 0.896273,
+      "brier": 0.168456
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "representation": "numeric_text",
+      "question": "above_sma50",
+      "base_rate": 0.545,
+      "accuracy": 0.825,
+      "balanced_accuracy": 0.834005,
+      "auc": 0.918792,
+      "brier": 0.172058
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "representation": "numeric_text",
+      "question": "up_5d",
+      "base_rate": 0.505,
+      "accuracy": 0.8125,
+      "balanced_accuracy": 0.814306,
+      "auc": 0.962521,
+      "brier": 0.159556
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "representation": "numeric_text",
+      "question": "vol_above_norm",
+      "base_rate": 0.3575,
+      "accuracy": 0.4475,
+      "balanced_accuracy": 0.435104,
+      "auc": 0.407635,
+      "brier": 0.272664
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "representation": "numeric_text",
+      "question": "near_60d_high",
+      "base_rate": 0.315,
+      "accuracy": 0.685,
+      "balanced_accuracy": 0.5,
+      "auc": 0.832667,
+      "brier": 0.187416
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "representation": "verbal",
+      "question": "rsi_above_70",
+      "base_rate": 0.0725,
+      "accuracy": 0.9075,
+      "balanced_accuracy": 0.775304,
+      "auc": 0.936332,
+      "brier": 0.120175
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "representation": "verbal",
+      "question": "above_sma50",
+      "base_rate": 0.545,
+      "accuracy": 0.9225,
+      "balanced_accuracy": 0.928899,
+      "auc": 0.995085,
+      "brier": 0.115357
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "representation": "verbal",
+      "question": "up_5d",
+      "base_rate": 0.505,
+      "accuracy": 0.7,
+      "balanced_accuracy": 0.70257,
+      "auc": 0.879588,
+      "brier": 0.195097
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "representation": "verbal",
+      "question": "vol_above_norm",
+      "base_rate": 0.3575,
+      "accuracy": 0.605,
+      "balanced_accuracy": 0.584039,
+      "auc": 0.613698,
+      "brier": 0.231353
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "representation": "verbal",
+      "question": "near_60d_high",
+      "base_rate": 0.315,
+      "accuracy": 0.875,
+      "balanced_accuracy": 0.801587,
+      "auc": 0.998726,
+      "brier": 0.115476
+    }
+  ],
+  "summary": [
+    {
+      "checkpoint": "english",
+      "representation": "numeric_text",
+      "balanced_accuracy": 0.687786,
+      "auc": 0.76189,
+      "brier": 0.227514
+    },
+    {
+      "checkpoint": "english",
+      "representation": "raw_json",
+      "balanced_accuracy": 0.58329,
+      "auc": 0.705854,
+      "brier": 0.260815
+    },
+    {
+      "checkpoint": "english",
+      "representation": "verbal",
+      "balanced_accuracy": 0.782074,
+      "auc": 0.857041,
+      "brier": 0.154107
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "representation": "numeric_text",
+      "balanced_accuracy": 0.683483,
+      "auc": 0.803578,
+      "brier": 0.19203
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "representation": "raw_json",
+      "balanced_accuracy": 0.520793,
+      "auc": 0.715482,
+      "brier": 0.240793
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "representation": "verbal",
+      "balanced_accuracy": 0.75848,
+      "auc": 0.884686,
+      "brier": 0.155492
+    }
+  ],
+  "example": {
+    "raw_json": {
+      "close": 231.5254,
+      "dist_sma20": -0.0033,
+      "dist_sma50": -0.0113,
+      "sma50_slope": -0.0034,
+      "rsi14": 49.3892,
+      "ret_5d": 0.016,
+      "ret_20d": -0.0355,
+      "ret_60d": -0.0048,
+      "vol_20d": 0.286,
+      "vol_ratio": 1.6895,
+      "dd_60d": -0.0402,
+      "volume_ratio": 1.3771
+    },
+    "numeric_text": "Close 231.53. Distance to 20-day average -0.3%. Distance to 50-day average -1.1%. 50-day average change over two weeks -0.3%. RSI(14) 49.4. Returns +1.6% (5 days), -3.5% (20 days), -0.5% (60 days). Volatility 29% annualized, 1.69x its one-year norm. Drawdown from 60-day high -4.0%. Volume 1.38x its 20-day average.",
+    "verbal": "Price is 1.1% below its 50-day average. Price is close to its 20-day average (-0.3%). The 50-day average over two weeks is falling (-0.3%). RSI(14) is 49, neutral. Returns: +1.6% over 5 days, -3.5% over 20 days, -0.5% over 60 days. Volatility is elevated: 29% annualized, 1.7x its one-year norm. Price is 4% below its 60-day high. Trading volume is normal (1.4x its 20-day average)."
+  }
+}

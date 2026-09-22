@@ -1,0 +1,667 @@
+{
+  "labels": [
+    "bullish",
+    "bearish",
+    "neutral"
+  ],
+  "n_val": 2388,
+  "n_train": 9543,
+  "n_calibration": 1500,
+  "class_balance_val": {
+    "neutral": 0.655779,
+    "bullish": 0.198911,
+    "bearish": 0.14531
+  },
+  "table": {
+    "lexicon (rules)": {
+      "n": 2388,
+      "accuracy": 0.730318,
+      "macro_f1": 0.624551,
+      "brier": 0.455745,
+      "nll": 0.807101,
+      "ece": 0.130318,
+      "confusion": [
+        [
+          250,
+          8,
+          217
+        ],
+        [
+          25,
+          139,
+          183
+        ],
+        [
+          154,
+          57,
+          1355
+        ]
+      ],
+      "labels": [
+        "bullish",
+        "bearish",
+        "neutral"
+      ],
+      "latency_ms_per_item": 0.003572,
+      "cost_usd_per_1k": 0.0
+    },
+    "tf-idf + logreg (supervised)": {
+      "n": 2388,
+      "accuracy": 0.830402,
+      "macro_f1": 0.755065,
+      "brier": 0.244394,
+      "nll": 0.446383,
+      "ece": 0.030221,
+      "confusion": [
+        [
+          309,
+          22,
+          144
+        ],
+        [
+          25,
+          198,
+          124
+        ],
+        [
+          56,
+          34,
+          1476
+        ]
+      ],
+      "labels": [
+        "bullish",
+        "bearish",
+        "neutral"
+      ],
+      "latency_ms_per_item": 0.008404,
+      "cost_usd_per_1k": 0.0
+    },
+    "laya/english (zero-shot)": {
+      "n": 2388,
+      "accuracy": 0.774707,
+      "macro_f1": 0.692999,
+      "brier": 0.386725,
+      "nll": 0.683309,
+      "ece": 0.170876,
+      "confusion": [
+        [
+          278,
+          7,
+          190
+        ],
+        [
+          6,
+          176,
+          165
+        ],
+        [
+          113,
+          57,
+          1396
+        ]
+      ],
+      "labels": [
+        "bullish",
+        "bearish",
+        "neutral"
+      ],
+      "latency_ms_per_item": 28.371345,
+      "cost_usd_per_1k": 0.0
+    },
+    "laya/english + calibration": {
+      "n": 2388,
+      "accuracy": 0.775126,
+      "macro_f1": 0.680996,
+      "brier": 0.334446,
+      "nll": 0.584905,
+      "ece": 0.025601,
+      "confusion": [
+        [
+          239,
+          8,
+          228
+        ],
+        [
+          3,
+          172,
+          172
+        ],
+        [
+          70,
+          56,
+          1440
+        ]
+      ],
+      "labels": [
+        "bullish",
+        "bearish",
+        "neutral"
+      ],
+      "latency_ms_per_item": 28.371345,
+      "cost_usd_per_1k": 0.0
+    },
+    "laya/typed-decisions (zero-shot)": {
+      "n": 2388,
+      "accuracy": 0.727806,
+      "macro_f1": 0.69544,
+      "brier": 0.468584,
+      "nll": 0.796583,
+      "ece": 0.218342,
+      "confusion": [
+        [
+          382,
+          14,
+          79
+        ],
+        [
+          10,
+          255,
+          82
+        ],
+        [
+          300,
+          165,
+          1101
+        ]
+      ],
+      "labels": [
+        "bullish",
+        "bearish",
+        "neutral"
+      ],
+      "latency_ms_per_item": 28.275293,
+      "cost_usd_per_1k": 0.0
+    },
+    "laya/typed-decisions + calibration": {
+      "n": 2388,
+      "accuracy": 0.786432,
+      "macro_f1": 0.705534,
+      "brier": 0.310752,
+      "nll": 0.530694,
+      "ece": 0.019775,
+      "confusion": [
+        [
+          261,
+          8,
+          206
+        ],
+        [
+          2,
+          191,
+          154
+        ],
+        [
+          68,
+          72,
+          1426
+        ]
+      ],
+      "labels": [
+        "bullish",
+        "bearish",
+        "neutral"
+      ],
+      "latency_ms_per_item": 28.275293,
+      "cost_usd_per_1k": 0.0
+    },
+    "laya/multilingual (zero-shot)": {
+      "n": 2388,
+      "accuracy": 0.382747,
+      "macro_f1": 0.39669,
+      "brier": 0.811215,
+      "nll": 1.406247,
+      "ece": 0.31813,
+      "confusion": [
+        [
+          212,
+          188,
+          75
+        ],
+        [
+          11,
+          321,
+          15
+        ],
+        [
+          215,
+          970,
+          381
+        ]
+      ],
+      "labels": [
+        "bullish",
+        "bearish",
+        "neutral"
+      ],
+      "latency_ms_per_item": 10.727453,
+      "cost_usd_per_1k": 0.0
+    },
+    "laya/multilingual + calibration": {
+      "n": 2388,
+      "accuracy": 0.69933,
+      "macro_f1": 0.52835,
+      "brier": 0.422937,
+      "nll": 0.716369,
+      "ece": 0.041797,
+      "confusion": [
+        [
+          114,
+          11,
+          350
+        ],
+        [
+          9,
+          117,
+          221
+        ],
+        [
+          67,
+          60,
+          1439
+        ]
+      ],
+      "labels": [
+        "bullish",
+        "bearish",
+        "neutral"
+      ],
+      "latency_ms_per_item": 10.727453,
+      "cost_usd_per_1k": 0.0
+    },
+    "cascade laya/typed-decisions+cal -> claude": {
+      "n": 2388,
+      "accuracy": 0.824539,
+      "macro_f1": 0.777202,
+      "brier": 0.269517,
+      "nll": 0.475117,
+      "ece": 0.029423,
+      "confusion": [
+        [
+          339,
+          7,
+          129
+        ],
+        [
+          2,
+          244,
+          101
+        ],
+        [
+          102,
+          78,
+          1386
+        ]
+      ],
+      "labels": [
+        "bullish",
+        "bearish",
+        "neutral"
+      ],
+      "latency_ms_per_item": null,
+      "cost_usd_per_1k": 0.361801
+    }
+  },
+  "cascade_curve": [
+    {
+      "escalation_rate": 0.0,
+      "accuracy": 0.786432,
+      "macro_f1": 0.705534,
+      "brier": 0.310752,
+      "claude_cost_usd_per_1k": 0.0
+    },
+    {
+      "escalation_rate": 0.05,
+      "accuracy": 0.795645,
+      "macro_f1": 0.724477,
+      "brier": 0.300144,
+      "claude_cost_usd_per_1k": 0.09818
+    },
+    {
+      "escalation_rate": 0.1,
+      "accuracy": 0.801089,
+      "macro_f1": 0.737667,
+      "brier": 0.29134,
+      "claude_cost_usd_per_1k": 0.196359
+    },
+    {
+      "escalation_rate": 0.15,
+      "accuracy": 0.817839,
+      "macro_f1": 0.764278,
+      "brier": 0.275882,
+      "claude_cost_usd_per_1k": 0.294539
+    },
+    {
+      "escalation_rate": 0.2,
+      "accuracy": 0.827889,
+      "macro_f1": 0.782319,
+      "brier": 0.265572,
+      "claude_cost_usd_per_1k": 0.392718
+    },
+    {
+      "escalation_rate": 0.25,
+      "accuracy": 0.833752,
+      "macro_f1": 0.793176,
+      "brier": 0.259276,
+      "claude_cost_usd_per_1k": 0.490898
+    }
+  ],
+  "reliability": {
+    "laya/typed-decisions (zero-shot)": [
+      {
+        "lo": 0.3,
+        "hi": 0.4,
+        "confidence": 0.3816,
+        "accuracy": 0.416667,
+        "n": 120
+      },
+      {
+        "lo": 0.4,
+        "hi": 0.5,
+        "confidence": 0.451292,
+        "accuracy": 0.698512,
+        "n": 1277
+      },
+      {
+        "lo": 0.5,
+        "hi": 0.6,
+        "confidence": 0.543251,
+        "accuracy": 0.766387,
+        "n": 595
+      },
+      {
+        "lo": 0.6,
+        "hi": 0.7,
+        "confidence": 0.646206,
+        "accuracy": 0.84,
+        "n": 250
+      },
+      {
+        "lo": 0.7,
+        "hi": 0.8,
+        "confidence": 0.740388,
+        "accuracy": 0.88189,
+        "n": 127
+      },
+      {
+        "lo": 0.8,
+        "hi": 0.9,
+        "confidence": 0.825877,
+        "accuracy": 0.947368,
+        "n": 19
+      }
+    ],
+    "laya/typed-decisions + calibration": [
+      {
+        "lo": 0.3,
+        "hi": 0.4,
+        "confidence": 0.385312,
+        "accuracy": 0.333333,
+        "n": 3
+      },
+      {
+        "lo": 0.4,
+        "hi": 0.5,
+        "confidence": 0.483087,
+        "accuracy": 0.512821,
+        "n": 39
+      },
+      {
+        "lo": 0.5,
+        "hi": 0.6,
+        "confidence": 0.551356,
+        "accuracy": 0.538745,
+        "n": 271
+      },
+      {
+        "lo": 0.6,
+        "hi": 0.7,
+        "confidence": 0.651973,
+        "accuracy": 0.668639,
+        "n": 338
+      },
+      {
+        "lo": 0.7,
+        "hi": 0.8,
+        "confidence": 0.755902,
+        "accuracy": 0.772983,
+        "n": 533
+      },
+      {
+        "lo": 0.8,
+        "hi": 0.9,
+        "confidence": 0.85104,
+        "accuracy": 0.873918,
+        "n": 809
+      },
+      {
+        "lo": 0.9,
+        "hi": 1.0,
+        "confidence": 0.932923,
+        "accuracy": 0.926582,
+        "n": 395
+      }
+    ],
+    "tf-idf + logreg (supervised)": [
+      {
+        "lo": 0.3,
+        "hi": 0.4,
+        "confidence": 0.37682,
+        "accuracy": 0.3,
+        "n": 20
+      },
+      {
+        "lo": 0.4,
+        "hi": 0.5,
+        "confidence": 0.456777,
+        "accuracy": 0.429577,
+        "n": 142
+      },
+      {
+        "lo": 0.5,
+        "hi": 0.6,
+        "confidence": 0.549315,
+        "accuracy": 0.565574,
+        "n": 244
+      },
+      {
+        "lo": 0.6,
+        "hi": 0.7,
+        "confidence": 0.649472,
+        "accuracy": 0.709251,
+        "n": 227
+      },
+      {
+        "lo": 0.7,
+        "hi": 0.8,
+        "confidence": 0.751644,
+        "accuracy": 0.821678,
+        "n": 286
+      },
+      {
+        "lo": 0.8,
+        "hi": 0.9,
+        "confidence": 0.853796,
+        "accuracy": 0.886792,
+        "n": 477
+      },
+      {
+        "lo": 0.9,
+        "hi": 1.0,
+        "confidence": 0.954285,
+        "accuracy": 0.966734,
+        "n": 992
+      }
+    ]
+  },
+  "tfidf_train_seconds": 0.539034,
+  "calibrator_english": {
+    "T": 0.57851,
+    "bias": {
+      "bullish": 0.0,
+      "bearish": 0.407098,
+      "neutral": 0.484217
+    }
+  },
+  "calibrator_typed-decisions": {
+    "T": 0.402793,
+    "bias": {
+      "bullish": 0.0,
+      "bearish": 0.259392,
+      "neutral": 1.284026
+    }
+  },
+  "calibrator_multilingual": {
+    "T": 1.496356,
+    "bias": {
+      "bullish": 0.0,
+      "bearish": -1.397908,
+      "neutral": 1.243118
+    }
+  },
+  "fast_engine": "laya/typed-decisions + calibration (chosen by training macro-F1)",
+  "fast_engine_train_f1": {
+    "english": 0.679093,
+    "typed-decisions": 0.699707,
+    "multilingual": 0.521465
+  },
+  "cascade_threshold_from_train_q20": 0.317322,
+  "claude": {
+    "model": "claude-opus-5",
+    "effort": "low",
+    "transport": "claude -p (Claude Code)",
+    "items": 821,
+    "wall_seconds_this_run": 86.03469,
+    "fresh_items": 821,
+    "notional_cost_usd": 1.612109,
+    "median_batch_latency_ms": 15097.0485,
+    "items_per_request": 40
+  },
+  "random_300": {
+    "claude": {
+      "n": 300,
+      "accuracy": 0.786667,
+      "macro_f1": 0.761486,
+      "brier": 0.277471,
+      "nll": 0.467665,
+      "ece": 0.0522,
+      "confusion": [
+        [
+          49,
+          0,
+          2
+        ],
+        [
+          2,
+          40,
+          6
+        ],
+        [
+          32,
+          22,
+          147
+        ]
+      ],
+      "labels": [
+        "bullish",
+        "bearish",
+        "neutral"
+      ]
+    },
+    "lexicon (rules)": {
+      "n": 300,
+      "accuracy": 0.7,
+      "macro_f1": 0.578386,
+      "brier": 0.48,
+      "nll": 0.840409,
+      "ece": 0.1,
+      "confusion": [
+        [
+          28,
+          0,
+          23
+        ],
+        [
+          2,
+          15,
+          31
+        ],
+        [
+          22,
+          12,
+          167
+        ]
+      ],
+      "labels": [
+        "bullish",
+        "bearish",
+        "neutral"
+      ]
+    },
+    "tf-idf + logreg (supervised)": {
+      "n": 300,
+      "accuracy": 0.81,
+      "macro_f1": 0.712639,
+      "brier": 0.266098,
+      "nll": 0.476402,
+      "ece": 0.031558,
+      "confusion": [
+        [
+          31,
+          3,
+          17
+        ],
+        [
+          1,
+          22,
+          25
+        ],
+        [
+          7,
+          4,
+          190
+        ]
+      ],
+      "labels": [
+        "bullish",
+        "bearish",
+        "neutral"
+      ]
+    },
+    "laya/typed-decisions + calibration": {
+      "n": 300,
+      "accuracy": 0.803333,
+      "macro_f1": 0.713011,
+      "brier": 0.30636,
+      "nll": 0.531189,
+      "ece": 0.064932,
+      "confusion": [
+        [
+          30,
+          1,
+          20
+        ],
+        [
+          0,
+          23,
+          25
+        ],
+        [
+          5,
+          8,
+          188
+        ]
+      ],
+      "labels": [
+        "bullish",
+        "bearish",
+        "neutral"
+      ]
+    }
+  },
+  "cascade_operating_point": {
+    "threshold": 0.317322,
+    "escalation_rate": 0.184255,
+    "all_escalations_labeled": true
+  }
+}

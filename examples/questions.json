@@ -1,0 +1,8 @@
+{
+  "sentiment": {"type": "choice", "instructions": "How will this headline move the stock it is about?",
+                "criteria": {"bullish": "likely to push the price up", "bearish": "likely to push the price down",
+                             "neutral": "no clear effect"}},
+  "surprise": {"type": "score", "instructions": "How surprising is this news for investors?",
+               "criteria": ["expected", "mildly surprising", "very surprising"]},
+  "guidance": {"type": "noul", "instructions": "The headline is about company guidance or an outlook change."}
+}

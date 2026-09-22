@@ -1,0 +1,10 @@
+name: tests
+on: [push, pull_request]
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv venv --python 3.11 && uv pip install -e ".[claude,dev]"
+      - run: uv run pytest  # offline: synthetic data and fake engines; the live-Laya test is opt-in

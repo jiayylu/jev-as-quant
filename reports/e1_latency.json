@@ -1,0 +1,262 @@
+{
+  "machine": {
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "processor": "arm",
+    "chip": "Apple M3 Pro (18 GB)",
+    "torch": "2.14.0"
+  },
+  "published": {
+    "laya_t4_single_ms": 32.8,
+    "laya_t4_batched10_per_q_ms": 7.2,
+    "laya_cpu_preloaded_ms": [
+      193,
+      464
+    ],
+    "jev_end_to_end_ms": [
+      70,
+      500
+    ]
+  },
+  "results": [
+    {
+      "checkpoint": "english",
+      "device": "mps",
+      "path": "single",
+      "questions": 1,
+      "state": "market (~110 tokens)",
+      "p50_ms": 57.601834,
+      "p95_ms": 63.53819,
+      "reps": 20
+    },
+    {
+      "checkpoint": "english",
+      "device": "mps",
+      "path": "single",
+      "questions": 3,
+      "state": "market (~110 tokens)",
+      "p50_ms": 152.753687,
+      "p95_ms": 162.309104,
+      "reps": 20
+    },
+    {
+      "checkpoint": "english",
+      "device": "mps",
+      "path": "single",
+      "questions": 6,
+      "state": "market (~110 tokens)",
+      "p50_ms": 312.603146,
+      "p95_ms": 318.420322,
+      "reps": 20
+    },
+    {
+      "checkpoint": "english",
+      "device": "mps",
+      "path": "single",
+      "questions": 1,
+      "state": "headline (~20 tokens)",
+      "p50_ms": 33.882833,
+      "p95_ms": 35.329549,
+      "reps": 20
+    },
+    {
+      "checkpoint": "english",
+      "device": "mps",
+      "path": "batched(64 states)",
+      "questions": 1,
+      "state": "market (~110 tokens)",
+      "p50_ms": 51.058488,
+      "p95_ms": 51.46544,
+      "reps": 3
+    },
+    {
+      "checkpoint": "english",
+      "device": "mps",
+      "path": "batched(64 states)",
+      "questions": 3,
+      "state": "market (~110 tokens)",
+      "p50_ms": 153.948142,
+      "p95_ms": 156.726175,
+      "reps": 3
+    },
+    {
+      "checkpoint": "english",
+      "device": "cpu",
+      "path": "single",
+      "questions": 1,
+      "state": "market (~110 tokens)",
+      "p50_ms": 180.885666,
+      "p95_ms": 198.655329,
+      "reps": 20
+    },
+    {
+      "checkpoint": "english",
+      "device": "cpu",
+      "path": "single",
+      "questions": 3,
+      "state": "market (~110 tokens)",
+      "p50_ms": 430.487917,
+      "p95_ms": 444.240204,
+      "reps": 20
+    },
+    {
+      "checkpoint": "english",
+      "device": "cpu",
+      "path": "single",
+      "questions": 6,
+      "state": "market (~110 tokens)",
+      "p50_ms": 816.383375,
+      "p95_ms": 843.316146,
+      "reps": 20
+    },
+    {
+      "checkpoint": "english",
+      "device": "cpu",
+      "path": "single",
+      "questions": 1,
+      "state": "headline (~20 tokens)",
+      "p50_ms": 113.38123,
+      "p95_ms": 117.400333,
+      "reps": 20
+    },
+    {
+      "checkpoint": "english",
+      "device": "cpu",
+      "path": "batched(64 states)",
+      "questions": 1,
+      "state": "market (~110 tokens)",
+      "p50_ms": 127.201743,
+      "p95_ms": 134.347964,
+      "reps": 3
+    },
+    {
+      "checkpoint": "english",
+      "device": "cpu",
+      "path": "batched(64 states)",
+      "questions": 3,
+      "state": "market (~110 tokens)",
+      "p50_ms": 380.346271,
+      "p95_ms": 383.121579,
+      "reps": 3
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "device": "mps",
+      "path": "single",
+      "questions": 1,
+      "state": "market (~110 tokens)",
+      "p50_ms": 54.781271,
+      "p95_ms": 60.918175,
+      "reps": 20
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "device": "mps",
+      "path": "single",
+      "questions": 3,
+      "state": "market (~110 tokens)",
+      "p50_ms": 149.949021,
+      "p95_ms": 159.463837,
+      "reps": 20
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "device": "mps",
+      "path": "single",
+      "questions": 6,
+      "state": "market (~110 tokens)",
+      "p50_ms": 309.314,
+      "p95_ms": 315.517827,
+      "reps": 20
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "device": "mps",
+      "path": "single",
+      "questions": 1,
+      "state": "headline (~20 tokens)",
+      "p50_ms": 33.647479,
+      "p95_ms": 36.330216,
+      "reps": 20
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "device": "mps",
+      "path": "batched(64 states)",
+      "questions": 1,
+      "state": "market (~110 tokens)",
+      "p50_ms": 50.523371,
+      "p95_ms": 50.6989,
+      "reps": 3
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "device": "mps",
+      "path": "batched(64 states)",
+      "questions": 3,
+      "state": "market (~110 tokens)",
+      "p50_ms": 151.838354,
+      "p95_ms": 152.331254,
+      "reps": 3
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "device": "cpu",
+      "path": "single",
+      "questions": 1,
+      "state": "market (~110 tokens)",
+      "p50_ms": 177.150354,
+      "p95_ms": 200.865773,
+      "reps": 20
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "device": "cpu",
+      "path": "single",
+      "questions": 3,
+      "state": "market (~110 tokens)",
+      "p50_ms": 431.289395,
+      "p95_ms": 457.321858,
+      "reps": 20
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "device": "cpu",
+      "path": "single",
+      "questions": 6,
+      "state": "market (~110 tokens)",
+      "p50_ms": 830.514645,
+      "p95_ms": 850.335319,
+      "reps": 20
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "device": "cpu",
+      "path": "single",
+      "questions": 1,
+      "state": "headline (~20 tokens)",
+      "p50_ms": 113.81125,
+      "p95_ms": 118.814452,
+      "reps": 20
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "device": "cpu",
+      "path": "batched(64 states)",
+      "questions": 1,
+      "state": "market (~110 tokens)",
+      "p50_ms": 128.724145,
+      "p95_ms": 129.313811,
+      "reps": 3
+    },
+    {
+      "checkpoint": "typed-decisions",
+      "device": "cpu",
+      "path": "batched(64 states)",
+      "questions": 3,
+      "state": "market (~110 tokens)",
+      "p50_ms": 384.149996,
+      "p95_ms": 388.116558,
+      "reps": 3
+    }
+  ]
+}

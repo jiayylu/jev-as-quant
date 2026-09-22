@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.cache/
+data_cache/
+scratch/
+*.egg-info/
+.DS_Store
+# market / news raw data is downloaded on demand and never committed (licensing)
+*.parquet
