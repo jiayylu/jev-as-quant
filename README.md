@@ -114,10 +114,13 @@ uv run pytest                                          # 离线：合成数据 +
 
 第一次用到 Laya 时会从 Hugging Face 下载权重（`convaiinnovations/laya`，每个 checkpoint 约 1.7 GB）。
 
-**不想下载模型也能复现**：[Release v0.1.0](https://github.com/jiayylu/jev-as-quant/releases/tag/v0.1.0) 附带了本次实验的全部 46,109 条模型判断（Laya 和 Claude，只有答案和概率，不含文本）。解压到 `.cache/decisions.sqlite` 后，E2–E5 会全部命中缓存，不会加载模型，也不会调用 Claude（E1 测的是延迟，必须在本地真跑）。
+**不想下载模型也能复现**：[Release v0.2.0](https://github.com/jiayylu/jev-as-quant/releases/tag/v0.2.0) 附带了 E1–E6 的全部 59,111 条模型判断（Laya 和 Claude，只有答案和概率，不含文本）。解压到 `.cache/decisions.sqlite` 后：
+- E2–E5 会全部命中缓存，不会加载模型，也不会调用 Claude；
+- E6 同样如此，但要先跑 `collect_sec.py` 从 SEC 重建公告文本；
+- E1 测的是延迟，必须在本地真跑。
 
 ```bash
-mkdir -p .cache && gh release download v0.1.0 -p decisions.sqlite.gz -O - | gunzip > .cache/decisions.sqlite
+mkdir -p .cache && gh release download v0.2.0 -p decisions-v0.2.0.sqlite.gz -O - | gunzip > .cache/decisions.sqlite
 ```
 
 ```bash
