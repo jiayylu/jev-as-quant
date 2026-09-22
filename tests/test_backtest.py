@@ -93,3 +93,22 @@ def test_weekly_calendar_takes_last_bar_of_week():
     cal = decision_calendar(idx, "W-FRI")
     assert all(d.weekday() == 4 for d in cal[:2])
     assert list(decision_calendar(idx, 5)) == list(idx[::5])
+
+
+def test_news_strategy_given_signals_market_neutral_and_holding():
+    from jevquant.strategies import NewsStrategy
+
+    m = _market(n=30, k=4)
+    m = Market(open=m.open.rename(columns=lambda c: f"S{c[-1]}"), close=m.close.rename(columns=lambda c: f"S{c[-1]}"),
+               features={})
+    d = m.dates
+    ev = pd.DataFrame({"date": [d[5], d[5], d[8]], "symbol": ["S0", "S1", "S0"], "text": ["a", "b", "c"]})
+    strat = NewsStrategy(None, ev, hold_days=3, signals=[1.0, -1.0, 1.0], market_neutral=True)
+    strat.prepare(m, d)
+    book = strat.book
+    assert np.allclose(book.sum(axis=1), 0.0)  # hedged every day
+    assert book.loc[d[5], "S0"] > 0 > book.loc[d[5], "S1"]
+    assert (book.loc[d[8]:d[10], "S0"] > 0).all() and abs(book.loc[d[11], "S0"]) < 1e-12  # held exactly 3 days
+    raw = NewsStrategy(None, ev, hold_days=3, signals=[1.0, -1.0, 1.0])
+    raw.prepare(m, d)
+    assert raw.book.loc[d[5], "S0"] == 0.25  # 1/N sizing without the hedge

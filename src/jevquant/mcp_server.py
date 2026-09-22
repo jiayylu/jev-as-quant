@@ -60,6 +60,14 @@ def market_state(symbol: str) -> dict:
     return service.market_state(symbol)
 
 
+@server.tool()
+def recent_filings(symbol: str, since_days: int = 120) -> dict:
+    """A US company's latest SEC 8-K press releases (earnings, guidance, deals, management changes),
+    each classified bullish / bearish / neutral by Laya with calibrated probabilities and a
+    needs_review flag. Timestamps are SEC acceptance times in US/Eastern. Research only."""
+    return service.recent_filings(symbol, since_days)
+
+
 def main() -> None:
     server.run("stdio")
 

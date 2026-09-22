@@ -22,6 +22,10 @@ def main(argv: list[str] | None = None) -> None:
     m = sub.add_parser("market", help="verbalized snapshot + regime/signal/risk judgments for a ticker")
     m.add_argument("symbol")
 
+    f = sub.add_parser("filings", help="a US company's latest SEC 8-K press releases, read by Laya")
+    f.add_argument("symbol")
+    f.add_argument("--days", type=int, default=120)
+
     sub.add_parser("mcp", help="run the MCP server on stdio")
     a = ap.parse_args(argv)
 
@@ -35,6 +39,8 @@ def main(argv: list[str] | None = None) -> None:
         out = service.screen_headlines([x for x in lines if x.strip()], a.review_below)
     elif a.cmd == "market":
         out = service.market_state(a.symbol)
+    elif a.cmd == "filings":
+        out = service.recent_filings(a.symbol, a.days)
     else:
         from .mcp_server import main as mcp_main
         return mcp_main()

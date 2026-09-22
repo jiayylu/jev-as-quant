@@ -143,3 +143,26 @@ Agreement with the rules on buy/hold/sell:
 | laya/english | 61.3% | 0.00 | {'buy': 1.0} |
 | laya/typed-decisions | 75.8% | 0.49 | {'buy': 0.7086, 'sell': 0.2914} |
 | rules | – | – | {'buy': 0.6135, 'sell': 0.3117, 'hold': 0.0748} |
+
+## E6 real press releases (2024-01-01 → 2026-09-21, 8,677 releases, 453 companies)
+
+Cascade: 1,585 releases (18%) re-read by Claude, notional $7.32.
+
+| reader | bullish | bearish | reaction before we can trade, L/S bp (t) | next day L/S bp (t) | 5 days L/S bp (t) | 10 days L/S bp (t) |
+|---|---|---|---|---|---|---|
+| lexicon | 52% | 6% | +15.2 (1.54) | -8.5 (-1.38) | -22.1 (-2.28) | -27.9 (-2.25) |
+| tf-idf (tweets) | 22% | 2% | +37.5 (2.02) | +11.5 (0.95) | +1.4 (0.08) | -7.6 (-0.35) |
+| laya/typed-decisions+cal | 56% | 2% | +26.3 (2.80) | -6.2 (-1.03) | -9.3 (-0.97) | -18.9 (-1.48) |
+| cascade laya->claude | 59% | 5% | +49.1 (4.87) | +0.4 (0.07) | -3.4 (-0.34) | -7.0 (-0.53) |
+| every release bullish | 100% | 0% | -0.7 (-0.12) | -6.9 (-1.81) | -10.2 (-1.56) | -11.8 (-1.30) |
+
+| strategy (5-day hold) | CAGR | vol | Sharpe [95% CI] | by year | hold 1/3/5/10 days | max drawdown | avg gross |
+|---|---|---|---|---|---|---|---|
+| lexicon | -1.0% | 0.5% | -1.85 [-3.26, -0.63] | 2024: -1.71, 2025: -1.82, 2026: -2.07 | -1.41 / -1.93 / -1.85 / -1.71 | -2.9% | 0.12 |
+| tf-idf (tweets) | -0.1% | 0.3% | -0.42 [-1.68, 0.70] | 2024: 0.50, 2025: -1.41, 2026: -0.10 | -0.29 / -0.29 / -0.42 / -0.73 | -0.8% | 0.06 |
+| laya/typed-decisions+cal | -0.6% | 0.5% | -1.18 [-2.69, 0.18] | 2024: -0.46, 2025: -2.15, 2026: -0.96 | -1.73 / -1.41 / -1.18 / -1.36 | -2.4% | 0.13 |
+| cascade laya->claude | -0.4% | 0.6% | -0.62 [-1.92, 0.56] | 2024: -0.37, 2025: -1.40, 2026: -0.10 | -0.86 / -0.78 / -0.62 / -0.83 | -1.8% | 0.14 |
+| every release bullish | -1.7% | 0.7% | -2.53 [-4.12, -0.76] | 2024: -2.26, 2025: -3.74, 2026: -1.78 | -3.50 / -3.06 / -2.53 / -2.49 | -4.6% | 0.21 |
+
+Placebo (Laya's labels shuffled, 20 draws): Sharpe -2.19 ± 0.17; 5-day L/S -10.7 ± 5.3 bp.
+Always trading the next day's open instead: laya/typed-decisions+cal Sharpe -1.91, cascade laya->claude Sharpe -1.84.

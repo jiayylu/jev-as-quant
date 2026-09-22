@@ -362,6 +362,79 @@ def fig_real(mode):
     save(fig, "e5_real", mode)
 
 
+# --------------------------------------------------------------------------------------- E6
+def fig_real_news(mode):
+    d = load("e6_real_news")
+    if not d:
+        return
+    t = THEMES[mode]
+    import pandas as pd
+    order = ["lexicon", "tf-idf (tweets)", "laya/typed-decisions+cal", "cascade laya->claude"]
+    short = {"lexicon": "lexicon", "tf-idf (tweets)": "TF-IDF", "laya/typed-decisions+cal": "Laya",
+             "cascade laya->claude": "Laya → Claude", "every release bullish": "every release bullish"}
+    fig, axes = figure(t, 13.5, 4.9, ncols=3, gridspec_kw={"width_ratios": [1, 1.25, 1.3]})
+    fig.subplots_adjust(left=0.06, right=0.845, top=0.78, bottom=0.2, wspace=0.42)
+
+    ax = axes[0]
+    gaps = [d["event_study"][n]["gap"] for n in order]
+    span = max(abs(g["ls_mean_bp"]) for g in gaps) or 1.0
+    for i, (n, es) in enumerate(zip(order, gaps)):
+        v = es["ls_mean_bp"]
+        ax.bar(i, v, width=0.62, color=entity_color(n, t))
+        ax.text(i, v + (0.03 if v >= 0 else -0.03) * span, f"{v:+.0f} bp\nt={es['t']:.1f}",
+                ha="center", va="bottom" if v >= 0 else "top", fontsize=7.5, color=t["text2"])
+    ax.set_ylim(min(0, -0.2 * span) if min(g["ls_mean_bp"] for g in gaps) >= 0 else -1.3 * span, 1.3 * span)
+    ax.axhline(0, color=t["grid"], linewidth=1)
+    ax.set_xticks(range(len(order)))
+    ax.set_xticklabels([short[n] for n in order], rotation=20, ha="right", fontsize=8.5, color=t["text"])
+    ax.set_ylabel("bullish minus bearish, basis points")
+    ax.set_title("Did the market agree? (not tradable)", fontsize=10, color=t["text"], loc="left")
+    style(ax, t)
+
+    ax = axes[1]
+    hs = ["r1", "r5", "r10"]
+    w = 0.19
+    for j, n in enumerate(order):
+        vals = [d["event_study"][n][h]["ls_mean_bp"] for h in hs]
+        xs = np.arange(len(hs)) + (j - 1.5) * w
+        ax.bar(xs, vals, width=w - 0.02, color=entity_color(n, t), label=short[n])
+    pl = d["placebo"]
+    lo_b, hi_b = pl["ls5d_bp_mean"] - 2 * pl["ls5d_bp_sd"], pl["ls5d_bp_mean"] + 2 * pl["ls5d_bp_sd"]
+    ax.fill_between([0.55, 1.45], lo_b, hi_b, color=t["band"], zorder=0)
+    ax.text(1, lo_b, "shuffled labels\n±2 sd", ha="center", va="top", fontsize=7.5, color=t["text2"])
+    ax.axhline(0, color=t["grid"], linewidth=1)
+    ax.set_xticks(range(len(hs)))
+    ax.set_xticklabels(["next day", "5 days", "10 days"], color=t["text"])
+    ax.set_ylabel("bullish minus bearish, basis points")
+    ax.set_title("After we can trade (open to open)", fontsize=10, color=t["text"], loc="left")
+    style(ax, t)
+    legend(ax, t, loc="upper center", bbox_to_anchor=(0.5, -0.1), fontsize=7.5, ncol=4)
+
+    ax = axes[2]
+    ends_x, ends_y, names = [], [], []
+    for n in ["laya/typed-decisions+cal", "cascade laya->claude", "lexicon", "every release bullish"]:
+        e = d["equity"][n]
+        x = pd.to_datetime(e["dates"])
+        ls = (0, (4, 2)) if n == "every release bullish" else "-"
+        ax.plot(x, e["values"], color=entity_color(n, t) if n != "every release bullish" else t["ref"],
+                linewidth=1.6, linestyle=ls)
+        ends_x.append(x[-1] + pd.Timedelta(days=10))
+        ends_y.append(e["values"][-1])
+        names.append(f"{short[n]} ({d['backtest'][n]['sharpe']:.2f})")
+    label_ends(ax, t, ends_x, ends_y, names, log=False, min_gap=0.07)
+    ax.axhline(1, color=t["grid"], linewidth=1)
+    import matplotlib.dates as mdates
+    ax.xaxis.set_major_locator(mdates.YearLocator())
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+    ax.set_ylabel("market-neutral equity, after costs")
+    ax.set_title("5-day holding, Sharpe in brackets", fontsize=10, color=t["text"], loc="left")
+    style(ax, t)
+    titles(fig, t, f"E6 · Real press releases, real prices ({d['period'][0][:7]} → {d['period'][1][:7]})",
+           f"{d['n_releases']:,} SEC 8-K press releases from {d['n_companies_with_releases']} S&P 500 companies · "
+           "long bullish / short bearish, market neutral, 7 bp per trade")
+    save(fig, "e6_real_news", mode)
+
+
 # --------------------------------------------------------------------------------------- tables
 def pct(x, d=1):
     return "–" if x is None else f"{x * 100:.{d}f}%"
@@ -463,12 +536,38 @@ def results_md() -> str:
                 out.append(f"| {n} | {pct(r['agree'])} | {num(r['cohen_kappa'])} | {r['action_mix']} |")
         out.append(f"| rules | – | – | {e5['agreement']['rules_action_mix']} |")
         out.append("")
+    e6 = load("e6_real_news")
+    if e6:
+        out += [f"## E6 real press releases ({e6['period'][0]} → {e6['period'][1]}, {e6['n_releases']:,} releases, "
+                f"{e6['n_companies_with_releases']} companies)\n",
+                f"Cascade: {e6['cascade']['escalated']:,} releases ({e6['cascade']['rate']:.0%}) re-read by Claude, "
+                f"notional ${e6['cascade']['notional_cost_usd']:.2f}.", "",
+                "| reader | bullish | bearish | reaction before we can trade, L/S bp (t) | next day L/S bp (t) | "
+                "5 days L/S bp (t) | 10 days L/S bp (t) |", "|---|---|---|---|---|---|---|"]
+        for n, es in e6["event_study"].items():
+            mix = e6["label_mix"][n]
+            cells = " | ".join(f"{es[h]['ls_mean_bp']:+.1f} ({es[h]['t']:.2f})" for h in ("gap", "r1", "r5", "r10"))
+            out.append(f"| {n} | {pct(mix['bullish'], 0)} | {pct(mix['bearish'], 0)} | {cells} |")
+        out += ["", "| strategy (5-day hold) | CAGR | vol | Sharpe [95% CI] | by year | hold 1/3/5/10 days | "
+                "max drawdown | avg gross |", "|---|---|---|---|---|---|---|---|"]
+        for n, r in e6["backtest"].items():
+            ci = r.get("sharpe_ci95") or [None, None]
+            by = ", ".join(f"{y}: {v:.2f}" for y, v in r["sharpe_by_year"].items())
+            hs = e6["hold_sensitivity"][n]
+            hold = " / ".join(f"{hs[h]:.2f}" for h in ("1", "3", "5", "10"))
+            out.append(f"| {n} | {pct(r['cagr'])} | {pct(r['vol'])} | {num(r['sharpe'])} [{num(ci[0])}, {num(ci[1])}] | "
+                       f"{by} | {hold} | {pct(r['max_drawdown'])} | {num(r['avg_gross'])} |")
+        pl = e6["placebo"]
+        out += ["", f"Placebo (Laya's labels shuffled, 20 draws): Sharpe {pl['sharpe_mean']:.2f} ± {pl['sharpe_sd']:.2f}; "
+                f"5-day L/S {pl['ls5d_bp_mean']:+.1f} ± {pl['ls5d_bp_sd']:.1f} bp.",
+                "Always trading the next day's open instead: " + ", ".join(
+                    f"{k} Sharpe {v:.2f}" for k, v in e6["conservative_timing"].items()) + ".", ""]
     return "\n".join(out)
 
 
 def main():
     for mode in THEMES:
-        for f in (fig_latency, fig_numeracy, fig_news, fig_synthetic, fig_real):
+        for f in (fig_latency, fig_numeracy, fig_news, fig_synthetic, fig_real, fig_real_news):
             f(mode)
     (REPORTS / "RESULTS.md").write_text(results_md())
     print("figures ->", FIG, "| tables ->", REPORTS / "RESULTS.md")

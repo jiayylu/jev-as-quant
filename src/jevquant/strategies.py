@@ -116,31 +116,45 @@ class RouterStrategy:
 class NewsStrategy:
     """Use case 4. Trade each headline for `hold_days` sessions in the direction of its label.
 
-    Headlines are read at the close of their publication day and traded from the next open.
+    `events` needs columns date, symbol, text. `date` is the *decision* date: the trading day
+    whose close the headline is read at, so it is traded from the next open. Pass `signals`
+    (+1 / -1 / 0 per event) to reuse labels already computed, e.g. for placebo permutations.
+    With `market_neutral`, the equal-weight universe is shorted against the net position every
+    day, so the book earns only the stock-specific (abnormal) part of each move.
     """
 
-    def __init__(self, reader: Reader, events: pd.DataFrame, hold_days: int = 5, name: str | None = None):
+    def __init__(self, reader, events: pd.DataFrame, hold_days: int = 5, name: str | None = None,
+                 signals=None, market_neutral: bool = False):
         self.reader = reader
         self.events = events.reset_index(drop=True)
         self.hold_days = hold_days
-        self.name = name or f"news[{reader.name}]"
+        self.signals = None if signals is None else np.asarray(signals, dtype=float)
+        self.market_neutral = market_neutral
+        self.name = name or f"news[{getattr(reader, 'name', 'given signals')}]"
 
     def prepare(self, market, decision_dates):
         self.syms = market.symbols
         self.dates = market.dates
-        decisions = self.reader.read(list(self.events["text"])) if len(self.events) else []
-        sign = {"bullish": 1.0, "bearish": -1.0, "neutral": 0.0}
-        self.events["signal"] = [sign[d["sentiment"].choice] for d in decisions]
-        self.decisions = decisions
+        if self.signals is None:
+            decisions = self.reader.read(list(self.events["text"])) if len(self.events) else []
+            sign = {"bullish": 1.0, "bearish": -1.0, "neutral": 0.0}
+            self.events["signal"] = [sign[d["sentiment"].choice] for d in decisions]
+            self.decisions = decisions
+        else:
+            self.events["signal"] = self.signals
         pos = {d: i for i, d in enumerate(self.dates)}
         book = np.zeros((len(self.dates), len(self.syms)))
         col = {s: j for j, s in enumerate(self.syms)}
         for ev in self.events.itertuples():
             i = pos.get(ev.date)
-            if i is None or ev.signal == 0:
+            j = col.get(ev.symbol)
+            if i is None or j is None or ev.signal == 0:
                 continue
-            book[i:i + self.hold_days, col[ev.symbol]] += ev.signal
-        self.book = pd.DataFrame(np.clip(book, -1, 1) / len(self.syms), index=self.dates, columns=self.syms)
+            book[i:i + self.hold_days, j] += ev.signal
+        book = np.clip(book, -1, 1) / len(self.syms)
+        if self.market_neutral:
+            book = book - book.mean(axis=1, keepdims=True)
+        self.book = pd.DataFrame(book, index=self.dates, columns=self.syms)
 
     def target(self, date):
         return self.book.loc[date]

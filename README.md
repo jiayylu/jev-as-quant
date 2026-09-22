@@ -7,9 +7,12 @@
 > typed, calibrated decisions (`Choice` / `Score` / `Noul`) instead of text. This repo wires them into a
 > look-ahead-free quant research stack (features → verbalizer → typed judges → code-owned policy and
 > reduce-only risk → next-open execution), adds Claude as a System-2 fallback (cascade + MCP tool), and
-> tests the "naturally fit for trading" claim with five experiments on a laptop. Short version: Laya is a
+> tests the "naturally fit for trading" claim with six experiments on a laptop. Short version: Laya is a
 > good **reader of financial text**, especially when its least-certain ~20% is escalated to Claude; it is
-> a poor **reader of numbers** and adds nothing over plain rules on technical indicators.
+> a poor **reader of numbers** and adds nothing over plain rules on technical indicators. On 8,677 real
+> SEC 8-K press releases (2024-2026, pre-registered design) its reading agrees with the market's
+> immediate reaction, but that reaction happens before a daily trader can act: no reader is profitable
+> after costs. A post-hoc lead (drift after Claude-confirmed bad news) awaits out-of-sample testing.
 
 > ⚠️ 仅供研究和教育用途。没有券商接口，不会下单，任何输出都不构成投资建议。
 
@@ -27,9 +30,12 @@
 | 新闻驱动交易 | 合成市场里捕获的植入新闻冲击：词典 0.49 · Laya 0.56 · TF-IDF 0.58 · **Laya→Claude 0.68** | ✅ 级联最好（E4） |
 | 风控判断 | Laya 的"避险"判断只在 6% 的危机时刻触发，规则是 40% | ❌ 风控用代码（E4） |
 | 真实市场的买卖信号 | 8 只 ETF、2014–2026 周频：Laya english **永远回答"买入"**，typed-decisions **从不回答"持有"**；Sharpe 0.52 vs 规则 0.62，置信区间重叠；所有信号对下周收益的 IC 都不显著 | ❌ 纯技术面没有增量（E5） |
+| **真实新闻 + 真实股价（2024–2026）** | 453 家标普 500 公司的 8,677 条 SEC 公告：Laya 读出的方向和市场即时反应一致（t=2.8，加 Claude 后 t=4.9），但这部分反应发生在**我们能成交之前**；能成交之后，所有读法扣成本都亏（Sharpe −0.4 到 −1.9） | ❌ 读得对，但赚不到钱（E6） |
+| 坏消息的后续漂移 | 事后发现：Claude 复核后判为利空的公告，能成交后 5 天还会再跌 74 bp（t=−2.4），单独做空的 Sharpe 0.81，但 95% 区间含 0 | ❓ 待新数据验证的假设（E6） |
 | "零幻觉" | 厂商原话：只保证输出符合 schema，**答案本身可能是错的** | ❌ 类型安全 ≠ 判断正确 |
 
 **一句话**：Laya 擅长**读文字**，不擅长**读数字**。它最适合当 Claude 的"快速预筛层"：大部分样本在本地几十毫秒内判完，只把没把握的那一小部分交给 Claude。
+**但读对了不等于能赚钱**：在 2024–2026 年真实的公司公告上，市场在我们能交易之前就已经把信息反映进价格了。
 
 ## 文档
 
@@ -38,7 +44,7 @@
 | [01 需求分析](docs/01-需求分析.md) | 目标用户、功能与非功能需求、不做什么、验收标准 |
 | [02 任务判断](docs/02-任务判断.md) | 调研事实、逐条核实原始说法、量化任务适配矩阵、实验前写下的假设、和 Claude 的分工 |
 | [03 架构设计](docs/03-架构设计.md) | 设计原则、分层、一次决策的时间线、与 Claude 的三种结合方式、模块地图 |
-| [04 实验报告](docs/04-实验报告.md) | E1–E5 的完整结果与结论 |
+| [04 实验报告](docs/04-实验报告.md) | E1–E6 的完整结果与结论（E6 = 真实新闻 + 真实股价，设计先于结果提交） |
 | [05 演示：Claude 调用 Laya](docs/05-演示-Claude调用Laya.md) | Claude Code 通过 MCP 让 Laya 初筛新闻，再自己复核难例（真实运行记录） |
 | [reports/RESULTS.md](reports/RESULTS.md) | 自动生成的全部数据表 |
 
@@ -60,6 +66,13 @@ flowchart LR
 设计原则：**模型负责判断，代码负责执行**；**代码算数，模型读字**；**模型的风控意见只能减仓**；**所有引擎共用同一套 Choice / Score / Noul 格式**（Laya、Jev、Claude、规则都能直接替换）。详见 [03 架构设计](docs/03-架构设计.md)。
 
 ## 实验结果
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="reports/figures/e6_real_news-dark.png"><img alt="E6" src="reports/figures/e6_real_news.png"></picture>
+
+**E6：真实公告 + 真实股价（2024–2026）。**
+- **左图**：各种读法判断的利好 / 利空方向，和市场的即时反应一致，级联最准。但这段反应我们交易不到。
+- **中图**：等我们能成交之后，已经没有显著的超额收益了，和"打乱标签"的区间重叠。
+- **右图**：扣成本后，所有读法都是负收益。级联亏得最少，"全部当利好"亏得最多。
 
 <picture><source media="(prefers-color-scheme: dark)" srcset="reports/figures/e3_news-dark.png"><img alt="E3" src="reports/figures/e3_news.png"></picture>
 
@@ -86,7 +99,7 @@ flowchart LR
 | 方式 | 做什么 | 代码 |
 |---|---|---|
 | ① 级联 | Laya 判断全部样本，把确定度低的批量交给 Claude，用同一套问题和 JSON schema | `engines/cascade.py`、`engines/claude.py` |
-| ② Laya 作为 Claude 的工具 | MCP server 提供 `screen_headlines`、`judge`、`market_state` 三个工具；Claude 一次筛几百条，只精读被标记的几条 | `mcp_server.py`、`.mcp.json`、`.claude/skills/laya-triage` |
+| ② Laya 作为 Claude 的工具 | MCP server 提供 `screen_headlines`、`judge`、`recent_filings`、`market_state` 四个工具；Claude 一次筛几百条，只精读被标记的几条 | `mcp_server.py`、`.mcp.json`、`.claude/skills/laya-triage` |
 | ③ Claude 当老师 | Claude 设计题目、提供标签，用来校准（将来可以蒸馏）Laya | `calibration.py` |
 
 Claude 这边有两种调用方式：官方 `anthropic` SDK（结构化输出、拒答处理、服务端 fallback）；没有 API key 时，可以走已登录的 Claude Code CLI（`claude -p --json-schema`）。本项目的实验用的是后一种。
@@ -112,10 +125,16 @@ mkdir -p .cache && gh release download v0.1.0 -p decisions.sqlite.gz -O - | gunz
 uv run jevquant judge --state "Shares plunge 12% after the company slashes guidance" --questions examples/questions.json
 # 批量筛新闻：输出校准后的概率和 needs_review 标记
 uv run jevquant screen examples/headlines.txt
+# 某家美国公司最近的 SEC 公告（财报、指引、并购、高管变动），逐条给出 Laya 的判断
+# SEC 要求声明身份，先设置：export SEC_USER_AGENT="你的名字 你的邮箱"
+uv run jevquant filings NVDA
 # 某个标的的技术面快照：Laya 和规则基线的判断并排给出（仅供研究）
 uv run jevquant market SPY
 # 复现全部实验（Laya 和 Claude 的调用都有缓存，重跑不会重复计算）
-cd experiments && for e in e1_latency e2_numeracy e3_news e4_synthetic e5_real; do uv run python $e.py; done && uv run python make_report.py
+cd experiments && for e in e1_latency e2_numeracy e3_news e4_synthetic e5_real; do uv run python $e.py; done
+# E6 需要先从 SEC 抓公告（约 1 小时，结果缓存在 data_cache/sec/）
+export SEC_USER_AGENT="你的名字 你的邮箱"
+uv run python collect_sec.py && uv run python e6_real_news.py && uv run python make_report.py
 ```
 
 ### 在 Claude Code 里使用（Laya 成为 Claude 的一个工具）
@@ -151,12 +170,13 @@ print(d["sentiment"].choice, d["sentiment"].probabilities, d.escalated, d.latenc
 src/jevquant/
   typed.py            Choice / Score / Noul 及其答案类型（与 Jev/Laya 的 wire format 一致）
   engines/            laya.py  jev.py  claude.py  cascade.py  cache.py
+  data/               synthetic.py  news.py  yahoo.py  sec.py（SEC 8-K 公告：限速、缓存、新闻稿提取）
   judges.py           4 个 Judge（信号 / 风控 / 路由 / 新闻）+ Reader
   verbalize.py        特征 → 文字（只描述，不下结论）
   features.py  strategies.py  risk.py  backtest.py  calibration.py  metrics.py
   service.py  mcp_server.py  cli.py
 data_cache/           运行时下载的行情和推文（不提交）
-experiments/          e1 … e5 实验脚本 + make_report.py
+experiments/          e1 … e6 实验脚本、collect_sec.py（抓 SEC 公告）、make_report.py
 reports/              实验输出的 JSON、图表、RESULTS.md
 docs/                 01 需求分析 · 02 任务判断 · 03 架构设计 · 04 实验报告
 tests/                离线单元测试 + 可选的真实 Laya 一致性测试
@@ -165,7 +185,9 @@ tests/                离线单元测试 + 可选的真实 Laya 一致性测试
 ## 局限与下一步
 
 - **合成市场是我设计的**：状态参数、新闻冲击的大小和时序都是假设。它的作用是"真值已知的测试台"，不能代表真实市场的收益。
-- **真实市场只测了技术指标**：没有带时间戳的历史新闻源，所以 Laya 最擅长的"读新闻"在真实回测里没有测到。接入新闻源后，`NewsStrategy` 可以直接用。
+- **E6 用的是公司自己发的公告，不是媒体报道**：公告时间精确，但措辞偏正面；而且只有日线数据，最早只能在下一个开盘价成交，盘中更快的反应测不到。
+- **E6 的股票池有幸存者偏差**：选的是目前还在标普 500 里、且 2024 年前就已纳入的公司，期间被移出指数的公司不在样本里。
+- **坏消息漂移的线索还没验证**：需要用 2026 年 10 月以后的新公告，或者 2019–2023 年的独立样本重新检验。
 - **Jev 没有实测**：目前需要排队申请。客户端是按公开文档写的，只和本地模拟服务器对过协议。
 - **只做了校准，没有微调**：官方的微调笔记本需要 2×T4 跑 4～5 小时。用 Claude 的标签蒸馏 Laya 是最值得做的下一步。
 - **对抗文本**：新闻是外部写的文字，可能被刻意操纵。风控层保证模型突破不了限额，但判断本身仍然可能被带偏。
