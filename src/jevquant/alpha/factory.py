@@ -75,9 +75,12 @@ class Factory:
         return status
 
     # ------------------------------------------------------------------ combination
-    def composite(self, adaptive: bool = True, trailing_weeks: int = 156, min_weeks: int = 52) -> pd.DataFrame:
+    def composite(self, adaptive: bool = True, trailing_weeks: int | None = None, min_weeks: int | None = None) -> pd.DataFrame:
         """Weekly composite score from the library (dates x tickers)."""
         lab = self.lab
+        ppy = lab.periods_per_year
+        trailing_weeks = trailing_weeks or int(3 * ppy)   # three years of realized labels
+        min_weeks = min_weeks or int(ppy)                 # at least one year before an alpha gets weight
         ranks = {e: lab.weekly(a).rank(axis=1, pct=True) - 0.5 for e, a in self.library.items()}
         if not adaptive:
             return sum(ranks.values()) / max(1, len(ranks))
@@ -94,7 +97,7 @@ class Factory:
                 ok = kn[:i] <= t  # labels already realized at decision time t
                 x = vals[:i][ok][-trailing_weeks:]
                 x = x[np.isfinite(x)]
-                w.append(max(0.0, x.mean() / x.std() * math.sqrt(52)) if len(x) >= min_weeks and x.std() > 0 else 0.0)
+                w.append(max(0.0, x.mean() / x.std() * math.sqrt(ppy)) if len(x) >= min_weeks and x.std() > 0 else 0.0)
             w = pd.Series(w, index=lab.dates)
             self.weights[e] = w
             score = score.add(ranks[e].mul(w, axis=0), fill_value=0.0)
@@ -119,13 +122,16 @@ def weekly_portfolio(score: pd.DataFrame, lab: Lab, n: int = 50, buffer: int = 1
         if i1 >= len(p.dates):
             break
         s = score.loc[t].where(lab.member_w.loc[t]).dropna()
-        if len(s) < n * 2:
+        if len(s) < n * 2:  # every alpha switched off this week: keep the book, trade nothing
+            port = list(held)
+        else:
+            order = s.rank(ascending=False)
+            keep = [h for h in held if h in order.index and order[h] <= buffer]
+            new = [x for x in order.sort_values().index if x not in keep][: max(0, n - len(keep))]
+            port = keep + new
+        if not port:
             rows.append((t, np.nan, np.nan, np.nan, 0.0))
             continue
-        order = s.rank(ascending=False)
-        keep = [h for h in held if h in order.index and order[h] <= buffer]
-        new = [x for x in order.sort_values().index if x not in keep][: max(0, n - len(keep))]
-        port = keep + new
         changed = len(set(port) ^ set(held)) / 2 / n if held else 1.0
         r = O.iloc[i1] / O.iloc[i0] - 1
         members = lab.member_w.loc[t]
@@ -138,20 +144,20 @@ def weekly_portfolio(score: pd.DataFrame, lab: Lab, n: int = 50, buffer: int = 1
     return pd.DataFrame(rows, columns=["date", "portfolio", "ew_members", "spy", "turnover"]).set_index("date")
 
 
-def summarize(weekly: pd.DataFrame, a: str, b: str) -> dict:
-    """Performance of column a vs benchmark column b over weekly returns."""
+def summarize(weekly: pd.DataFrame, a: str, b: str, periods_per_year: float = 52.0) -> dict:
+    """Performance of column a vs benchmark column b over per-period returns."""
     w = weekly[[a, b]].dropna()
     if len(w) < 10:
         return {}
     ex = w[a] - w[b]
-    years = len(w) / 52
+    years = len(w) / periods_per_year
     cagr = lambda r: float((1 + r).prod() ** (1 / years) - 1)
     return {"cagr": cagr(w[a]), "bench_cagr": cagr(w[b]), "excess_cagr": cagr(w[a]) - cagr(w[b]),
-            "sharpe": float(w[a].mean() / w[a].std() * math.sqrt(52)),
-            "info_ratio": float(ex.mean() / ex.std() * math.sqrt(52)) if ex.std() > 0 else float("nan"),
+            "sharpe": float(w[a].mean() / w[a].std() * math.sqrt(periods_per_year)),
+            "info_ratio": float(ex.mean() / ex.std() * math.sqrt(periods_per_year)) if ex.std() > 0 else float("nan"),
             "excess_t": float(ex.mean() / ex.std() * math.sqrt(len(ex))) if ex.std() > 0 else float("nan"),
             "max_dd": float(((1 + w[a]).cumprod() / (1 + w[a]).cumprod().cummax() - 1).min()),
-            "hit_rate_vs_bench": float((ex > 0).mean()), "weeks": int(len(w))}
+            "hit_rate_vs_bench": float((ex > 0).mean()), "periods": int(len(w))}
 
 
 def enhanced_index(score: pd.DataFrame | None, lab: Lab, mcap: pd.DataFrame, tilt: float = 0.5,

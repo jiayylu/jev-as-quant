@@ -28,10 +28,14 @@ SPLITS = {"discovery": ("2014-01-01", "2020-12-31"), "validation": ("2021-01-01"
 COST_BPS = 10.0  # per side, commission + slippage, large caps
 
 
-def weekly_dates(p: Panel, start: str = "2014-01-01") -> pd.DatetimeIndex:
+def period_dates(p: Panel, start: str = "2014-01-01", freq: str = "W-FRI") -> pd.DatetimeIndex:
+    """Decision dates: the last trading day of each period (weekly by default, "M" for monthly)."""
     d = p.dates[p.dates >= start]
     s = pd.Series(d, index=d)
-    return pd.DatetimeIndex(s.groupby(d.to_period("W-FRI")).last().values)
+    return pd.DatetimeIndex(s.groupby(d.to_period(freq)).last().values)
+
+
+weekly_dates = period_dates
 
 
 def rowwise_spearman(a: pd.DataFrame, b: pd.DataFrame) -> pd.Series:
@@ -52,10 +56,15 @@ def rowwise_spearman(a: pd.DataFrame, b: pd.DataFrame) -> pd.Series:
 class Lab:
     panel: Panel
     horizon: int = 5
+    freq: str = "W-FRI"
+
+    @property
+    def periods_per_year(self) -> float:
+        return 12.0 if self.freq.startswith("M") else 52.0
 
     def __post_init__(self):
         p = self.panel
-        self.dates = weekly_dates(p)
+        self.dates = period_dates(p, freq=self.freq)
         O = p.open
         fwd = O.shift(-(1 + self.horizon)) / O.shift(-1) - 1
         mem = p.member
@@ -86,6 +95,7 @@ class Lab:
         top, bot = r >= 0.9, r <= 0.1
         churn = ((top != top.shift()).sum(axis=1) / top.sum(axis=1).replace(0, np.nan)).fillna(0) / 2
         ls = (self.label.where(top).mean(axis=1) - self.label.where(bot).mean(axis=1))
+        ppy = self.periods_per_year
         ls_net = ls - churn * 2 * 2 * COST_BPS / 1e4  # both legs, buy and sell
         out = {}
         for s in splits:
@@ -96,11 +106,11 @@ class Lab:
                 "ic": float(x.mean()) if len(x) else float("nan"),
                 "ic_t": float(x.mean() / x.std() * math.sqrt(len(x))) if len(x) > 5 and x.std() > 0 else float("nan"),
                 "ic_hit": float((x > 0).mean()) if len(x) else float("nan"),
-                "ls_net_ann": float(y.mean() * 52) if len(y) else float("nan"),
-                "ls_net_sharpe": float(y.mean() / y.std() * math.sqrt(52)) if len(y) > 5 and y.std() > 0 else float("nan"),
+                "ls_net_ann": float(y.mean() * ppy) if len(y) else float("nan"),
+                "ls_net_sharpe": float(y.mean() / y.std() * math.sqrt(ppy)) if len(y) > 5 and y.std() > 0 else float("nan"),
                 "turnover": float(churn[m].mean()),
                 "coverage": float(A[m].notna().sum(axis=1).mean() / max(1, self.member_w[m].sum(axis=1).mean())),
-                "n_weeks": int(len(x)),
+                "n_periods": int(len(x)),
             }
         return out
 

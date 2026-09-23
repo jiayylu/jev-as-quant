@@ -1,0 +1,176 @@
+{
+  "library": [
+    {
+      "expr": "rank(ts_sum(gap, 63)) * rank(sue)",
+      "family": "claude",
+      "reason": "discovery t=2.89, validation t=3.00"
+    }
+  ],
+  "n_tried": 667,
+  "tried_by_family": {
+    "seed": 24,
+    "random": 570,
+    "claude": 73,
+    "laya-question": 0
+  },
+  "coverage": 0.876059,
+  "portfolios": {
+    "aggressive_top50": {
+      "discovery": {
+        "vs_ew_members": {
+          "cagr": 0.158328,
+          "bench_cagr": 0.119543,
+          "excess_cagr": 0.038786,
+          "sharpe": 0.820025,
+          "info_ratio": 0.716456,
+          "excess_t": 1.757763,
+          "max_dd": -0.340697,
+          "hit_rate_vs_bench": 0.533546,
+          "periods": 313
+        },
+        "vs_spy": {
+          "cagr": 0.158328,
+          "bench_cagr": 0.129196,
+          "excess_cagr": 0.029132,
+          "sharpe": 0.820025,
+          "info_ratio": 0.481343,
+          "excess_t": 1.180932,
+          "max_dd": -0.340697,
+          "hit_rate_vs_bench": 0.536741,
+          "periods": 313
+        },
+        "turnover_per_week": 0.063607
+      },
+      "validation": {
+        "vs_ew_members": {
+          "cagr": 0.148933,
+          "bench_cagr": 0.091727,
+          "excess_cagr": 0.057206,
+          "sharpe": 0.805414,
+          "info_ratio": 0.956678,
+          "excess_t": 1.657014,
+          "max_dd": -0.16818,
+          "hit_rate_vs_bench": 0.538462,
+          "periods": 156
+        },
+        "vs_spy": {
+          "cagr": 0.148933,
+          "bench_cagr": 0.090282,
+          "excess_cagr": 0.058652,
+          "sharpe": 0.805414,
+          "info_ratio": 0.791911,
+          "excess_t": 1.371629,
+          "max_dd": -0.16818,
+          "hit_rate_vs_bench": 0.519231,
+          "periods": 156
+        },
+        "turnover_per_week": 0.072179
+      },
+      "holdout": {
+        "vs_ew_members": {
+          "cagr": 0.175039,
+          "bench_cagr": 0.145228,
+          "excess_cagr": 0.029811,
+          "sharpe": 1.030228,
+          "info_ratio": 0.50412,
+          "excess_t": 0.830122,
+          "max_dd": -0.177688,
+          "hit_rate_vs_bench": 0.546099,
+          "periods": 141
+        },
+        "vs_spy": {
+          "cagr": 0.175039,
+          "bench_cagr": 0.213328,
+          "excess_cagr": -0.038289,
+          "sharpe": 1.030228,
+          "info_ratio": -0.407364,
+          "excess_t": -0.670796,
+          "max_dd": -0.177688,
+          "hit_rate_vs_bench": 0.475177,
+          "periods": 141
+        },
+        "turnover_per_week": 0.071489
+      }
+    },
+    "enhanced_index": {
+      "discovery": {
+        "vs_spy": {
+          "cagr": 0.139589,
+          "bench_cagr": 0.129754,
+          "excess_cagr": 0.009834,
+          "sharpe": 0.880376,
+          "info_ratio": 0.552514,
+          "excess_t": 1.465825,
+          "max_dd": -0.314305,
+          "hit_rate_vs_bench": 0.535519,
+          "periods": 366
+        },
+        "vs_cap_bench": {
+          "cagr": 0.139589,
+          "bench_cagr": 0.136879,
+          "excess_cagr": 0.00271,
+          "sharpe": 0.880376,
+          "info_ratio": 0.325135,
+          "excess_t": 0.862585,
+          "max_dd": -0.314305,
+          "hit_rate_vs_bench": 0.437158,
+          "periods": 366
+        },
+        "turnover_per_week": 0.024845
+      },
+      "validation": {
+        "vs_spy": {
+          "cagr": 0.100115,
+          "bench_cagr": 0.090282,
+          "excess_cagr": 0.009833,
+          "sharpe": 0.659653,
+          "info_ratio": 0.57252,
+          "excess_t": 0.991633,
+          "max_dd": -0.236354,
+          "hit_rate_vs_bench": 0.570513,
+          "periods": 156
+        },
+        "vs_cap_bench": {
+          "cagr": 0.100115,
+          "bench_cagr": 0.095623,
+          "excess_cagr": 0.004492,
+          "sharpe": 0.659653,
+          "info_ratio": 0.493452,
+          "excess_t": 0.854685,
+          "max_dd": -0.236354,
+          "hit_rate_vs_bench": 0.583333,
+          "periods": 156
+        },
+        "turnover_per_week": 0.026116
+      },
+      "holdout": {
+        "vs_spy": {
+          "cagr": 0.218145,
+          "bench_cagr": 0.213328,
+          "excess_cagr": 0.004817,
+          "sharpe": 1.240066,
+          "info_ratio": 0.211008,
+          "excess_t": 0.347461,
+          "max_dd": -0.20541,
+          "hit_rate_vs_bench": 0.510638,
+          "periods": 141
+        },
+        "vs_cap_bench": {
+          "cagr": 0.218145,
+          "bench_cagr": 0.22109,
+          "excess_cagr": -0.002945,
+          "sharpe": 1.240066,
+          "info_ratio": -0.094618,
+          "excess_t": -0.155805,
+          "max_dd": -0.20541,
+          "hit_rate_vs_bench": 0.489362,
+          "periods": 141
+        },
+        "turnover_per_week": 0.028289
+      }
+    }
+  },
+  "weights_last": {
+    "rank(ts_sum(gap, 63)) * rank(sue)": 0.0
+  }
+}

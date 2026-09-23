@@ -9,3 +9,4 @@ scratch/
 .DS_Store
 # market / news raw data is downloaded on demand and never committed (licensing)
 *.parquet
+uv.lock

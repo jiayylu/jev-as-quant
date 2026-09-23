@@ -158,8 +158,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--claude-rounds", type=int, default=2)
     ap.add_argument("--question-rounds", type=int, default=2)
-    ap.add_argument("--screen-n", type=int, default=3000)
-    ap.add_argument("--promote-max", type=int, default=3)
+    ap.add_argument("--screen-n", type=int, default=2500)
+    ap.add_argument("--promote-max", type=int, default=2)
     a = ap.parse_args()
 
     P, F, inputs = build_inputs()

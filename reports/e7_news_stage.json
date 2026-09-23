@@ -1,0 +1,204 @@
+{
+  "n_releases": 23541,
+  "screened_questions": [
+    {
+      "name": "q_one_off_earnings_driver",
+      "q": {
+        "name": "one_off_earnings_driver",
+        "type": "noul",
+        "instructions": "Read the headline and lead paragraph. Answer YES if the reported earnings, EPS, or profit growth is attributed, in whole or in part, to an item that is not recurring operating performance — for example: tax reform or a discrete tax benefit, an extra week in the quarter (14-week quarter, 53-week year), a gain on sale or divestiture, an insurance or legal settlement, share repurchases reducing the share count, a one-time accounting change, or favorable foreign currency. Answer YES if such an item is named as a driver or is flagged via wording like 'excluding special gains and charges', 'discrete tax items', or 'benefited from'. Answer NO if the growth is presented as coming from ordinary ongoing operations with no such item mentioned.",
+        "levels": [],
+        "reason": "Headline EPS flattered by tax, an extra week, or buybacks looks bullish on tone but the market unwinds the non-recurring component over the following days, as in NVR and L Brands."
+      },
+      "screen_ic": 0.010259,
+      "screen_t": 0.385404
+    },
+    {
+      "name": "q_guidance_change_direction",
+      "q": {
+        "name": "guidance_change_direction",
+        "type": "score",
+        "instructions": "Read the headline and lead paragraph and identify how the company treats its forward outlook or guidance. Choose exactly one level based only on the wording used, not on comparing any numbers. 'lowered' = guidance cut, reduced, or the outlook is described as below prior expectations, or guidance is explicitly withdrawn or suspended. 'narrowed_or_mixed' = guidance narrowed, midpoint unchanged, trimmed at one end, or raised on one metric while cut on another. 'reaffirmed' = guidance affirmed, maintained, reiterated, or on track. 'raised' = guidance raised, increased, or the outlook described as above prior expectations. 'no_guidance' = no forward outlook or guidance is mentioned at all in the text you can see.",
+        "levels": [
+          "lowered",
+          "narrowed_or_mixed",
+          "reaffirmed",
+          "raised",
+          "no_guidance"
+        ],
+        "reason": "Guidance verbs are the clearest forward signal in a lead paragraph, and 'narrowed' or 'reaffirmed' framing on a strong-sounding quarter (PFE, POOL) tends to bleed negatively for days after the initial reaction."
+      },
+      "screen_ic": 0.020382,
+      "screen_t": 0.721504
+    },
+    {
+      "name": "q_organic_demand_momentum",
+      "q": {
+        "name": "organic_demand_momentum",
+        "type": "score",
+        "instructions": "Read the headline and lead paragraph and judge how the company characterizes the direction of its underlying customer demand — sales, comparable sales, volumes, subscriptions, or units — relative to recent periods. Use only qualitative wording and explicit comparatives, not your own arithmetic. 'deteriorating' = demand described as declining, soft, weak, down, pressured, or negative comps. 'decelerating' = growth continues but is described with softening or moderating language, or the release leans on prior-period or year-to-date figures rather than the current quarter's trend. 'steady' = growth described as continued, consistent, in line, or stable with no direction implied. 'accelerating' = growth described as accelerating, strengthening, improving sequentially, above plan, or at a record pace. If demand is not characterized at all, choose 'steady'.",
+        "levels": [
+          "deteriorating",
+          "decelerating",
+          "steady",
+          "accelerating",
+          "not_characterized"
+        ],
+        "reason": "Growth that is still positive but decelerating is invisible to a tone reading yet is exactly the pattern in Veeva, Adobe, Fortinet, and Domino's, where a superlative headline preceded sustained post-announcement weakness."
+      },
+      "screen_ic": 0.014052,
+      "screen_t": 0.48847
+    },
+    {
+      "name": "q_defensive_framing",
+      "q": {
+        "name": "defensive_framing",
+        "type": "score",
+        "instructions": "Read the headline and lead paragraph and judge what the company chose to lead with. Choose exactly one level. 'balance_sheet_defense' = the emphasis is on liquidity, cash on hand, paying down or drawing on credit facilities, cost cuts, store reopenings, capital ratios, or resilience through a disruption, rather than on selling more to customers. 'mixed_defense_and_growth' = roughly equal emphasis on defensive items and on demand or revenue growth. 'operational_execution' = emphasis on margins, efficiency, execution, or strategic progress without a clear demand claim. 'demand_growth' = the emphasis is clearly on revenue, sales, volume, bookings, or customer growth. Judge emphasis by what appears in the headline and first sentences, not by which words are most positive.",
+        "levels": [
+          "balance_sheet_defense",
+          "mixed_defense_and_growth",
+          "operational_execution",
+          "demand_growth"
+        ],
+        "reason": "When a release leads with liquidity, cost control, or capital strength instead of demand — TJX, HPE, Keysight, KeyCorp — the positive-sounding language masks an absent demand story that the market digests over the following week."
+      },
+      "screen_ic": -0.010277,
+      "screen_t": -0.384487
+    },
+    {
+      "name": "q_superlative_intensity",
+      "q": {
+        "name": "superlative_intensity",
+        "type": "score",
+        "instructions": "Read the headline and lead paragraph and rate how promotional the self-description is, independent of whether the underlying results are good. Count wording such as 'record', 'strong', 'outstanding', 'exceptional', 'robust', 'momentum', 'well above plan', 'best ever', 'significant', and self-congratulatory management characterizations. 'plain' = neutral, factual reporting of results with no promotional adjectives. 'mild' = one or two positive adjectives. 'promotional' = several superlatives or repeated emphasis on records and strength. 'heavily_promotional' = superlatives saturate the headline and lead paragraph, including stacked claims or management quotes praising performance. Rate the language only; ignore whether the numbers justify it.",
+        "levels": [
+          "plain",
+          "mild",
+          "promotional",
+          "heavily_promotional"
+        ],
+        "reason": "Dense superlative language is a discretionary framing choice that inflates a tone reading without adding information, so the residual after controlling for tone should predict negative drift where the promotion was compensating for a weak quarter."
+      },
+      "screen_ic": -0.005565,
+      "screen_t": -0.20302
+    },
+    {
+      "name": "q_forward_order_book",
+      "q": {
+        "name": "forward_order_book",
+        "type": "noul",
+        "instructions": "Read the headline and lead paragraph. Answer YES if the text states that a forward-looking commercial indicator grew, was strong, or reached a record — specifically: bookings, net bookings, book-to-bill, backlog, billings, remaining performance obligation, annual recurring revenue (ARR), annualized run-rate, subscription or renewal bookings, contract awards, new customer additions, or net customer relationship additions. Answer NO if no such forward indicator is mentioned, or if it is mentioned only as flat or declining. Base the answer on the words used, not on comparing figures.",
+        "levels": [],
+        "reason": "Bookings, backlog, and ARR disclosures convert to revenue only in later quarters and are routinely buried behind the EPS headline, making them a classic under-reacted item that should predict positive drift."
+      },
+      "screen_ic": 0.013823,
+      "screen_t": 0.558301
+    },
+    {
+      "name": "q_eps_growth_source",
+      "q": {
+        "name": "eps_growth_source",
+        "type": "score",
+        "instructions": "Read the headline and lead paragraph. Judge WHY reported earnings or EPS grew (or what the release credits the result to). Ignore whether the growth is large or small — only judge its source. Look for explicit attributions such as 'reflects a lower tax rate', 'lower pension expense', 'gain on sale', 'divestiture', 'share repurchase', 'fewer shares outstanding', 'one-time', 'discrete tax benefit' versus 'volume growth', 'price', 'organic sales', 'margin expansion', 'demand'. If EPS growth is described but no source is given at all, choose the middle level. Do not compute or compare numbers.",
+        "levels": [
+          "clearly non-operating (tax, pension, gains, divestiture, buyback)",
+          "mixed or mostly non-operating",
+          "source not stated",
+          "mostly operating",
+          "clearly operating (volume, price, margin, demand)"
+        ],
+        "reason": "EPS lifted by tax rate, pension, or buyback is lower-quality than operating-driven EPS, and the market takes days rather than seconds to discount the difference, as in Ryder, Baxter, and Lowe's."
+      },
+      "screen_ic": 0.029564,
+      "screen_t": 1.091487
+    },
+    {
+      "name": "q_adjustment_reliance",
+      "q": {
+        "name": "adjustment_reliance",
+        "type": "score",
+        "instructions": "Read the headline and lead paragraph. Judge how much the release depends on adjusted / non-GAAP / 'excluding special items' figures to present its result. Consider: does the headline lead with the adjusted number? Are GAAP and adjusted figures both shown and visibly far apart? Are exclusions named (restructuring, impairment, special items, amortization)? A release that presents a single GAAP figure with no adjustments is the low end. A release whose headline result only looks acceptable after exclusions is the high end. Judge prominence and framing, not the size of any arithmetic difference.",
+        "levels": [
+          "GAAP only, no adjustments mentioned",
+          "adjusted figures mentioned but secondary",
+          "GAAP and adjusted both featured with named exclusions",
+          "headline result depends on exclusions to look positive"
+        ],
+        "reason": "Heavy exclusion language cuts both ways over the following week — it flagged deterioration the reaction underrated at Rockwell and Lennox, and flagged an overstated GAAP loss that reversed upward at Ralph Lauren and L Brands."
+      },
+      "screen_ic": 0.02,
+      "screen_t": 0.781053
+    },
+    {
+      "name": "q_forward_outlook_stance",
+      "q": {
+        "name": "forward_outlook_stance",
+        "type": "score",
+        "instructions": "Read the headline and lead paragraph. Judge what the company says about FUTURE periods (guidance, outlook, full-year expectations, next quarter). Base this only on forward-looking statements, not on how good the reported quarter was. Choose 'no forward statement' when the text discusses only completed results, records, or prior-period comparisons and says nothing about upcoming periods — this is common and should not be confused with a neutral outlook. Treat safe-harbor boilerplate as not a forward statement.",
+        "levels": [
+          "outlook lowered, cut, or withdrawn",
+          "outlook cautious or hedged",
+          "no forward statement in the lead",
+          "outlook reaffirmed or maintained",
+          "outlook raised or increased"
+        ],
+        "reason": "The reported quarter is fully priced within minutes, but guidance language propagates through analyst revisions over the following week, and a strong-results release that is conspicuously silent on the forward period often drifts down."
+      },
+      "screen_ic": 0.014665,
+      "screen_t": 0.536485
+    },
+    {
+      "name": "q_comparison_base_shifted",
+      "q": {
+        "name": "comparison_base_shifted",
+        "type": "noul",
+        "instructions": "Read the headline and lead paragraph. Answer YES if the most prominent growth or improvement claim uses a comparison basis OTHER THAN plain year-over-year consolidated reported results. Examples of YES: comparing to the immediately preceding quarter instead of the prior-year quarter; leading with constant-currency, organic, comparable, pro-forma, or adjusted-basis growth; leading with growth in one segment, product line, or region rather than the total; leading with a 'record' for a sub-unit. Answer NO if the lead presents straightforward year-over-year total company results. Judge which basis is given top billing, not whether any number is correct.",
+        "levels": [],
+        "reason": "Shifting the comparison basis in the lead is a wording-level tell that the conventional year-over-year figure is weaker, which the market tends to work out only after digesting the full release."
+      },
+      "screen_ic": 0.012974,
+      "screen_t": 0.444897
+    },
+    {
+      "name": "q_forward_demand_signal",
+      "q": {
+        "name": "forward_demand_signal",
+        "type": "score",
+        "instructions": "Read the headline and lead paragraph. Judge what the text implies about FUTURE demand, using forward-looking operational indicators only: orders, bookings, backlog, pipeline, new contracts or wins, subscription or recurring revenue trends, customer or member growth, store traffic, comparable-store sales trajectory, capacity additions, or explicit commentary on demand conditions. Do NOT base the answer on reported revenue, earnings, or margins for the completed period. If the lead contains no forward-looking demand indicator, choose 'no demand indicator present'.",
+        "levels": [
+          "demand indicators deteriorating",
+          "demand indicators soft or mixed",
+          "no demand indicator present",
+          "demand indicators solid",
+          "demand indicators strengthening"
+        ],
+        "reason": "Forward demand indicators are the slowest-diffusing content in a release and are structurally separate from the reported P&L that the immediate price reaction already absorbed."
+      },
+      "screen_ic": 0.006842,
+      "screen_t": 0.266035
+    },
+    {
+      "name": "q_results_displaced_by_strategy",
+      "q": {
+        "name": "results_displaced_by_strategy",
+        "type": "noul",
+        "instructions": "Read the headline and lead paragraph. Answer YES if strategic or capital-allocation content shares or takes the top billing away from the operating results — for example a new buyback authorization, a dividend action, a review of strategic alternatives, discussions with third parties, a restructuring or transformation program, a multi-year plan, an acquisition or divestiture, or a leadership change appearing in the headline or first sentences alongside or instead of the quarter's results. Answer NO if the lead is devoted to reporting the period's operating and financial results. Judge placement and prominence, not whether the strategic news sounds good or bad.",
+        "levels": [],
+        "reason": "When a company gives its headline to buybacks, strategic reviews, or multi-year plans rather than the quarter, it is usually because the quarter cannot carry the release, and that inference resolves over days rather than at the open."
+      },
+      "screen_ic": -0.022884,
+      "screen_t": -0.902794
+    }
+  ],
+  "promoted": {},
+  "library": [
+    {
+      "expr": "rank(ts_sum(gap, 63)) * rank(sue)",
+      "family": "claude",
+      "reason": "discovery t=2.89, validation t=3.00",
+      "rationale": "Post-earnings drift persists only when the market's announcement reaction is corroborated by the accounting surprise; gap and sue agreeing screens out reactions driven by guidance noise or positioning."
+    }
+  ],
+  "claude_cost_usd": 0.977059
+}

@@ -166,3 +166,31 @@ Cascade: 1,585 releases (18%) re-read by Claude, notional $7.32.
 
 Placebo (Laya's labels shuffled, 20 draws): Sharpe -2.19 ± 0.17; 5-day L/S -10.7 ± 5.3 bp.
 Always trading the next day's open instead: laya/typed-decisions+cal Sharpe -1.91, cascade laya->claude Sharpe -1.84.
+
+## E7 alpha factory (point-in-time S&P 500; 667 candidates tried, 1 accepted)
+
+| source | tried | accepted |
+|---|---|---|
+| seed | 24 | 0 |
+| random | 570 | 0 |
+| claude | 73 | 1 |
+| laya-question | 0 | 0 |
+
+Accepted alphas:
+
+| expression | source | why |
+|---|---|---|
+| `rank(ts_sum(gap, 63)) * rank(sue)` | claude | discovery t=2.89, validation t=3.00 |
+
+Portfolios (weekly, long-only, 10 bp per side; holdout was locked until the library was frozen):
+
+| portfolio | period | CAGR | benchmark | excess | IR | t | vs SPY | turnover/wk |
+|---|---|---|---|---|---|---|---|---|
+| aggressive_top50 | discovery | 15.8% | ew members 12.0% | 3.9% | 0.72 | 1.76 | 2.9% | 6.4% |
+| aggressive_top50 | validation | 14.9% | ew members 9.2% | 5.7% | 0.96 | 1.66 | 5.9% | 7.2% |
+| aggressive_top50 | holdout | 17.5% | ew members 14.5% | 3.0% | 0.50 | 0.83 | -3.8% | 7.1% |
+| enhanced_index | discovery | 14.0% | cap bench 13.7% | 0.3% | 0.33 | 0.86 | 1.0% | 2.5% |
+| enhanced_index | validation | 10.0% | cap bench 9.6% | 0.4% | 0.49 | 0.85 | 1.0% | 2.6% |
+| enhanced_index | holdout | 21.8% | cap bench 22.1% | -0.3% | -0.09 | -0.16 | 0.5% | 2.8% |
+
+Monthly track (same 657 candidates, monthly decisions, 21-day holding): 0 accepted.

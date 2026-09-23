@@ -12,7 +12,12 @@
 > a poor **reader of numbers** and adds nothing over plain rules on technical indicators. On 8,677 real
 > SEC 8-K press releases (2024-2026, pre-registered design) its reading agrees with the market's
 > immediate reaction, but that reaction happens before a daily trader can act: no reader is profitable
-> after costs. A post-hoc lead (drift after Claude-confirmed bad news) awaits out-of-sample testing.
+> after costs. A post-hoc lead (drift after Claude-confirmed bad news) did **not** replicate on independent
+> data. A full alpha factory (point-in-time S&P 500 panel, safe expression DSL, pre-registered gates,
+> Claude as hypothesis generator, Laya as a near-zero-cost question-asker over 23.5k earnings releases)
+> tried 667 candidates and accepted exactly one. On a locked 2024-2026 holdout it beat the equal-weight
+> benchmark by +3.0%/yr (IR 0.50, t 0.83 — not significant) and lost to SPY by 3.8%/yr. **The market was
+> not beaten.**
 
 > ⚠️ 仅供研究和教育用途。没有券商接口，不会下单，任何输出都不构成投资建议。
 
@@ -31,11 +36,15 @@
 | 风控判断 | Laya 的"避险"判断只在 6% 的危机时刻触发，规则是 40% | ❌ 风控用代码（E4） |
 | 真实市场的买卖信号 | 8 只 ETF、2014–2026 周频：Laya english **永远回答"买入"**，typed-decisions **从不回答"持有"**；Sharpe 0.52 vs 规则 0.62，置信区间重叠；所有信号对下周收益的 IC 都不显著 | ❌ 纯技术面没有增量（E5） |
 | **真实新闻 + 真实股价（2024–2026）** | 453 家标普 500 公司的 8,677 条 SEC 公告：Laya 读出的方向和市场即时反应一致（t=2.8，加 Claude 后 t=4.9），但这部分反应发生在**我们能成交之前**；能成交之后，所有读法扣成本都亏（Sharpe −0.4 到 −1.9） | ❌ 读得对，但赚不到钱（E6） |
-| 坏消息的后续漂移 | 事后发现：Claude 复核后判为利空的公告，能成交后 5 天还会再跌 74 bp（t=−2.4），单独做空的 Sharpe 0.81，但 95% 区间含 0 | ❓ 待新数据验证的假设（E6） |
+| 坏消息的后续漂移 | E6 事后发现的线索（Claude 判利空的公告成交后 5 天再跌 74 bp，t=−2.4），拿 2016–2023 的独立样本重新检验：**没有复现**（开发期 t=0.87，验证期 t=0.45） | ❌ 事后线索经不起检验（E7） |
+| **自己找 alpha** | 把 667 个候选（24 个教科书种子 + 570 个随机公式 + 73 个 Claude 假设）送进事先定死的关卡：**只有 1 个通过**——`rank(ts_sum(gap,63)) * rank(sue)`（Claude 提出：财报即时反应 × 盈利意外），验证期 t=3.0、扣成本多空 Sharpe 1.12 | ✅ 流程可信，产出稀少（E7） |
+| **能不能跑赢大盘** | 留出期 2024-01～2026-09（此前从未打开）：前 50 等权组合年化 **17.5%**，超过等权基准 **+3.0%**（IR 0.50，**t=0.83 不显著**），但**输给 SPY 3.8%**；把大小盘风格剔除后的指数增强版超额 **−0.3%** | ❌ **没有跑赢大盘**（E7） |
 | "零幻觉" | 厂商原话：只保证输出符合 schema，**答案本身可能是错的** | ❌ 类型安全 ≠ 判断正确 |
 
 **一句话**：Laya 擅长**读文字**，不擅长**读数字**。它最适合当 Claude 的"快速预筛层"：大部分样本在本地几十毫秒内判完，只把没把握的那一小部分交给 Claude。
 **但读对了不等于能赚钱**：在 2024–2026 年真实的公司公告上，市场在我们能交易之前就已经把信息反映进价格了。
+**最后一步是做一个会自己找 alpha 的系统**（E7）：667 个候选只有 1 个通过全部关卡，留出期跑赢了等权基准（+3.0%/年）但**没有跑赢 SPY**（−3.8%/年），而且超额不显著。
+真正值钱的不是"找到了 alpha"，而是**那套会把假 alpha 拦下来的关卡**——它拦掉了 666 个。
 
 ## 文档
 
@@ -46,6 +55,7 @@
 | [03 架构设计](docs/03-架构设计.md) | 设计原则、分层、一次决策的时间线、与 Claude 的三种结合方式、模块地图 |
 | [04 实验报告](docs/04-实验报告.md) | E1–E6 的完整结果与结论（E6 = 真实新闻 + 真实股价，设计先于结果提交） |
 | [05 演示：Claude 调用 Laya](docs/05-演示-Claude调用Laya.md) | Claude Code 通过 MCP 让 Laya 初筛新闻，再自己复核难例（真实运行记录） |
+| [06 Alpha 工厂](docs/06-Alpha工厂.md) | 自己找 alpha + 反哺迭代：数据层、关卡、三个回路、E7 完整结果与最终考试 |
 | [reports/RESULTS.md](reports/RESULTS.md) | 自动生成的全部数据表 |
 
 ## 架构
@@ -66,6 +76,13 @@ flowchart LR
 设计原则：**模型负责判断，代码负责执行**；**代码算数，模型读字**；**模型的风控意见只能减仓**；**所有引擎共用同一套 Choice / Score / Noul 格式**（Laya、Jev、Claude、规则都能直接替换）。详见 [03 架构设计](docs/03-架构设计.md)。
 
 ## 实验结果
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="reports/figures/e7_alpha_factory-dark.png"><img alt="E7" src="reports/figures/e7_alpha_factory.png"></picture>
+
+**E7：Alpha 工厂（2014–2026，标普 500 point-in-time）。**
+- **左图**：667 个候选按来源分布，只有 1 个走完全部关卡。
+- **中图**：开发期的 t 值和验证期的 t 值几乎不相关——这正是防过拟合关卡在起作用。如果只看开发期，能"找到"几十个 alpha。
+- **右图**：留出期（2024-01 起，此前从未打开）的净值。跑赢了等权基准，但没跑赢 SPY。
 
 <picture><source media="(prefers-color-scheme: dark)" srcset="reports/figures/e6_real_news-dark.png"><img alt="E6" src="reports/figures/e6_real_news.png"></picture>
 
@@ -138,7 +155,16 @@ cd experiments && for e in e1_latency e2_numeracy e3_news e4_synthetic e5_real; 
 # E6 需要先从 SEC 抓公告（约 1 小时，结果缓存在 data_cache/sec/）
 export SEC_USER_AGENT="你的名字 你的邮箱"
 uv run python collect_sec.py && uv run python e6_real_news.py && uv run python make_report.py
+# E7 Alpha 工厂：先建 point-in-time 面板（成分股 + 价格 + 首次公布的财务数据），再跑工厂
+uv run python collect_fundamentals.py
+uv run python e7_alpha_factory.py          # A 阶段：价格 + 财务，随机搜索 + Claude 提假设
+uv run python collect_sec.py --universe sp500 --since 2016-01-01 --require-item 2.02
+uv run python e7_news_stage.py             # B 阶段：加上财报公告事件 + Claude 出题 Laya 作答
+uv run python e7_monthly.py                # 同一批候选再按月频判一次
+uv run python e7_final.py                  # 最终考试：打开 2024 年起的留出期（只能跑一次）
 ```
+
+> ⚠️ `e7_final.py` 会打开留出期。它只应该在所有关卡都跑完之后运行一次——留出期一旦看过，就不再是留出期了。
 
 ### 在 Claude Code 里使用（Laya 成为 Claude 的一个工具）
 
@@ -177,11 +203,13 @@ src/jevquant/
   judges.py           4 个 Judge（信号 / 风控 / 路由 / 新闻）+ Reader
   verbalize.py        特征 → 文字（只描述，不下结论）
   features.py  strategies.py  risk.py  backtest.py  calibration.py  metrics.py
+  alpha/              panel.py（point-in-time 面板）  fundamentals.py  dsl.py（安全表达式语言）
+                      lab.py（切分 / IC / 台账）  factory.py（关卡 + 组合）  events.py
   service.py  mcp_server.py  cli.py
 data_cache/           运行时下载的行情和推文（不提交）
-experiments/          e1 … e6 实验脚本、collect_sec.py（抓 SEC 公告）、make_report.py
+experiments/          e1 … e7 实验脚本、collect_sec.py / collect_fundamentals.py（抓数据）、make_report.py
 reports/              实验输出的 JSON、图表、RESULTS.md
-docs/                 01 需求分析 · 02 任务判断 · 03 架构设计 · 04 实验报告
+docs/                 01 需求分析 · 02 任务判断 · 03 架构设计 · 04 实验报告 · 05 演示 · 06 Alpha 工厂
 tests/                离线单元测试 + 可选的真实 Laya 一致性测试
 ```
 
@@ -190,7 +218,9 @@ tests/                离线单元测试 + 可选的真实 Laya 一致性测试
 - **合成市场是我设计的**：状态参数、新闻冲击的大小和时序都是假设。它的作用是"真值已知的测试台"，不能代表真实市场的收益。
 - **E6 用的是公司自己发的公告，不是媒体报道**：公告时间精确，但措辞偏正面；而且只有日线数据，最早只能在下一个开盘价成交，盘中更快的反应测不到。
 - **E6 的股票池有幸存者偏差**：选的是目前还在标普 500 里、且 2024 年前就已纳入的公司，期间被移出指数的公司不在样本里。
-- **坏消息漂移的线索还没验证**：需要用 2026 年 10 月以后的新公告，或者 2019–2023 年的独立样本重新检验。
+- **E7 的超额收益不显著**：留出期只有 2.7 年，按 0.50 的信息比率，要判断它是不是真的，需要 4 年以上。现在还不能说这个 alpha 站得住。
+- **E7 没有跑赢 SPY**：赢的是等权基准。2024–2026 年大盘股远好于中小盘，这个风格差异（约 7%/年）比选股赚到的（3%/年）更大。用市值权重做底仓、只按信号倾斜之后，超额就消失了。
+- **E7 的股票池同样有幸存者偏差**：2013 年以来进过标普 500 的股票里有 169 只拿不到价格（退市或被收购），覆盖率 87.6%（2024 年起约 97%）。
 - **Jev 没有实测**：目前需要排队申请。客户端是按公开文档写的，只和本地模拟服务器对过协议。
 - **只做了校准，没有微调**：官方的微调笔记本需要 2×T4 跑 4～5 小时。用 Claude 的标签蒸馏 Laya 是最值得做的下一步。
 - **对抗文本**：新闻是外部写的文字，可能被刻意操纵。风控层保证模型突破不了限额，但判断本身仍然可能被带偏。

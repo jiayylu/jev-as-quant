@@ -435,6 +435,88 @@ def fig_real_news(mode):
     save(fig, "e6_real_news", mode)
 
 
+# --------------------------------------------------------------------------------------- E7
+def fig_alpha_factory(mode):
+    import json as _json
+    import sqlite3
+    path = REPORTS / "alpha_ledger.sqlite"
+    if not path.exists():
+        return
+    t = THEMES[mode]
+    import pandas as pd
+    df = pd.read_sql_query("SELECT * FROM alphas", sqlite3.connect(path))
+    df["metrics"] = df["metrics"].map(lambda s: _json.loads(s) if s else {})
+    df["disc_t"] = df["metrics"].map(lambda m: m.get("discovery", {}).get("ic_t"))
+    df["val_t"] = df["metrics"].map(lambda m: m.get("validation", {}).get("ic_t"))
+    d = df.dropna(subset=["disc_t", "val_t"])
+    final = load("e7_final")
+    ncols = 3 if final and final.get("portfolios") else 2
+    fig, axes = figure(t, 12 if ncols == 3 else 9, 4.6, ncols=ncols,
+                       gridspec_kw={"width_ratios": [1, 1.3, 1.3][:ncols]})
+    fig.subplots_adjust(left=0.07, right=0.97, top=0.78, bottom=0.16, wspace=0.34)
+
+    ax = axes[0]
+    fam = df.groupby("family").size().sort_values(ascending=False)
+    acc = df[df.status == "accepted"].groupby("family").size()
+    colors = {"random": t["ref"], "seed": t["rules"], "claude": t["claude"], "laya-question": t["laya"]}
+    for i, (f, n) in enumerate(fam.items()):
+        ax.bar(i, n, width=0.62, color=colors.get(f, t["rules"]))
+        ax.text(i, n * 1.05, f"{int(acc.get(f, 0))} kept\nof {n}", ha="center", fontsize=8, color=t["text2"])
+    ax.set_yscale("log")
+    ax.set_xticks(range(len(fam)))
+    ax.set_xticklabels([f.replace("laya-question", "Laya Q") for f in fam.index], rotation=20, ha="right",
+                       fontsize=8.5, color=t["text"])
+    ax.set_ylabel("candidates tried (log)")
+    ax.set_ylim(0.8, fam.max() * 3)
+    ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}"))
+    ax.yaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+    ax.set_title("What the factory tried", fontsize=10, color=t["text"], loc="left")
+    style(ax, t)
+
+    ax = axes[1]
+    for f, g in d.groupby("family"):
+        ax.scatter(g.disc_t, g.val_t, s=14, alpha=0.65, color=colors.get(f, t["rules"]),
+                   label=f.replace("laya-question", "Laya question"), edgecolors="none")
+    ok = d[d.status == "accepted"]
+    if len(ok):
+        ax.scatter(ok.disc_t, ok.val_t, s=70, facecolors="none", edgecolors=t["text"], linewidths=1.2,
+                   label="accepted")
+    ax.axhline(0, color=t["grid"], linewidth=1)
+    ax.axvline(0, color=t["grid"], linewidth=1)
+    ax.axhline(1.65, color=t["ref"], linewidth=1, linestyle=(0, (3, 2)))
+    ax.text(d.disc_t.max(), 1.72, "validation gate ", fontsize=7.5, color=t["text2"], ha="right")
+    ax.set_xlabel("discovery t-stat (2014-2020)")
+    ax.set_ylabel("validation t-stat (2021-2023)")
+    ax.set_title("Discovery winners do not repeat", fontsize=10, color=t["text"], loc="left")
+    style(ax, t)
+    legend(ax, t, loc="lower right", fontsize=7.5)
+
+    if ncols == 3:
+        ax = axes[2]
+        for name, f in [("aggressive_top50", "e7_final_aggressive.csv"), ("enhanced_index", "e7_final_enhanced.csv")]:
+            p = REPORTS / "data" / f
+            if not p.exists():
+                continue
+            w = pd.read_csv(p, index_col=0, parse_dates=True).loc["2024-01-01":]
+            bench = "ew_members" if "ew_members" in w else "cap_bench"
+            cum = (1 + w[["portfolio", bench, "spy"]].dropna()).cumprod()
+            ax.plot(cum.index, cum["portfolio"], color=t["laya"] if "agg" in name else t["claude"], linewidth=1.8,
+                    label=name.replace("_", " "))
+            if "agg" in name:
+                ax.plot(cum.index, cum[bench], color=t["ref"], linewidth=1.3, linestyle=(0, (4, 2)), label="equal-weight members")
+                ax.plot(cum.index, cum["spy"], color=t["rules"], linewidth=1.3, label="SPY")
+        ax.set_title("Holdout 2024-2026 (after costs)", fontsize=10, color=t["text"], loc="left")
+        import matplotlib.dates as mdates
+        ax.xaxis.set_major_locator(mdates.YearLocator())
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+        style(ax, t)
+        legend(ax, t, loc="upper left", fontsize=7.5)
+    titles(fig, t, "E7 · The alpha factory on point-in-time S&P 500 data",
+           "Every candidate is oriented so its discovery IC is positive, then judged on 2021-2023 · "
+           "the holdout stays locked until the library is frozen")
+    save(fig, "e7_alpha_factory", mode)
+
+
 # --------------------------------------------------------------------------------------- tables
 def pct(x, d=1):
     return "–" if x is None else f"{x * 100:.{d}f}%"
@@ -562,12 +644,37 @@ def results_md() -> str:
                 f"5-day L/S {pl['ls5d_bp_mean']:+.1f} ± {pl['ls5d_bp_sd']:.1f} bp.",
                 "Always trading the next day's open instead: " + ", ".join(
                     f"{k} Sharpe {v:.2f}" for k, v in e6["conservative_timing"].items()) + ".", ""]
+    e7 = load("e7_final")
+    if e7:
+        out += [f"## E7 alpha factory (point-in-time S&P 500; {e7['n_tried']} candidates tried, "
+                f"{len(e7['library'])} accepted)\n",
+                "| source | tried | accepted |", "|---|---|---|"]
+        for f, n in e7["tried_by_family"].items():
+            out.append(f"| {f} | {n} | {sum(1 for a in e7['library'] if a['family'] == f)} |")
+        out += ["", "Accepted alphas:", "", "| expression | source | why |", "|---|---|---|"]
+        for a in e7["library"]:
+            out.append(f"| `{a['expr']}` | {a['family']} | {a['reason']} |")
+        out += ["", "Portfolios (weekly, long-only, 10 bp per side; holdout was locked until the library was frozen):", "",
+                "| portfolio | period | CAGR | benchmark | excess | IR | t | vs SPY | turnover/wk |",
+                "|---|---|---|---|---|---|---|---|---|"]
+        for name, block in e7["portfolios"].items():
+            for sp, b in block.items():
+                key = "vs_ew_members" if "vs_ew_members" in b else "vs_cap_bench"
+                x, y = b[key], b["vs_spy"]
+                out.append(f"| {name} | {sp} | {pct(x['cagr'])} | {key[3:].replace('_', ' ')} {pct(x['bench_cagr'])} | "
+                           f"{pct(x['excess_cagr'])} | {num(x['info_ratio'])} | {num(x['excess_t'])} | "
+                           f"{pct(y['excess_cagr'])} | {pct(b['turnover_per_week'])} |")
+        out.append("")
+    m7 = load("e7_monthly")
+    if m7:
+        out += [f"Monthly track (same {m7['n_judged']} candidates, monthly decisions, 21-day holding): "
+                f"{m7['counts'].get('accepted', 0)} accepted.", ""]
     return "\n".join(out)
 
 
 def main():
     for mode in THEMES:
-        for f in (fig_latency, fig_numeracy, fig_news, fig_synthetic, fig_real, fig_real_news):
+        for f in (fig_latency, fig_numeracy, fig_news, fig_synthetic, fig_real, fig_real_news, fig_alpha_factory):
             f(mode)
     (REPORTS / "RESULTS.md").write_text(results_md())
     print("figures ->", FIG, "| tables ->", REPORTS / "RESULTS.md")
